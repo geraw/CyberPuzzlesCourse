@@ -160,6 +160,20 @@ const render = () => {
     const hasMissingCoords = props.states.some(s => s.x === undefined || s.y === undefined);
     const shouldSimulate = props.auto || hasMissingCoords;
 
+    // Drag handlers (defined before use)
+    function dragstarted(event: any, d: any) {
+        if (!event.active) simulation?.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+    function dragged(event: any, d: any) {
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+    function dragended(event: any, d: any) {
+        if (!event.active) simulation?.alphaTarget(0);
+    }
+
     // Drag behavior
     const dragBehavior = d3.drag()
         .on("start", dragstarted)
@@ -345,21 +359,7 @@ const render = () => {
         tick();
     }
 
-    function dragstarted(event: any, d: any) {
-        if (!shouldSimulate) return;
-        if (!event.active) simulation?.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-    }
-    function dragged(event: any, d: any) {
-        if (!shouldSimulate) return;
-        d.fx = event.x;
-        d.fy = event.y;
-    }
-    function dragended(event: any, d: any) {
-        if (!shouldSimulate) return;
-        if (!event.active) simulation?.alphaTarget(0);
-    }
+
 };
 
 onMounted(() => {

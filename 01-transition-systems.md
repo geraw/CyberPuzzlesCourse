@@ -75,7 +75,7 @@ info: |
 
 <TransitionSystemD3  
   :states="[
-    { id: 's0', text: '$s_0$', label: '$\\{p^2\\}$',  initial: true },
+    { id: 's0', text: '$s_0$', label: '$\\{p\\}$',  initial: true },
     { id: 's1', text: '$s_1$', label: '$\\{q\\}$'},
     { id: 's2', text: '$s_2$', label: '$\\{p,q\\}$'}
   ]"
