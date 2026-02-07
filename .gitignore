@@ -1,0 +1,20 @@
+.DS_Store
+node_modules
+*.local
+.vite-inspect
+.remote-assets
+components.d.ts
+.vite
+dist
+old_latex_file
+Files.zip
+
+# TeX artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.xdv

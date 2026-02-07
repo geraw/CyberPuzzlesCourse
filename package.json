@@ -1,0 +1,29 @@
+{
+    "name": "formal-verification-methods",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "slidev build",
+        "build:all": "node build-all.js",
+        "dev": "slidev index.md --open",
+        "dev:intro": "slidev 00-intro.md --open"
+    },
+    "dependencies": {
+        "@slidev/cli": "^0.49.29",
+        "@slidev/theme-default": "latest",
+        "@slidev/theme-seriph": "latest",
+        "@types/katex": "^0.16.8",
+        "cytoscape": "^3.33.1",
+        "d3": "^7.9.0",
+        "d3-selection": "^3.0.0",
+        "d3-transition": "^3.0.1",
+        "katex": "^0.16.28",
+        "monaco-editor": "latest",
+        "slidev-theme-academic": "latest",
+        "slidev-theme-frankfurt": "latest",
+        "venn.js": "^0.2.20"
+    },
+    "devDependencies": {
+        "playwright-chromium": "latest"
+    }
+}
