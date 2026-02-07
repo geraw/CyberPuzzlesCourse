@@ -35,11 +35,9 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Install dependencies
-        run: nci
+        run: npm install
 
       - name: Install Playwright for pre-rendering
         run: npm i -D playwright-chromium
