@@ -1,5 +1,5 @@
 <template>
-  <div class="transition-system-container flex justify-center items-center mt-8"
+  <div ref="containerRef" class="transition-system-container flex justify-center items-center mt-8"
        @mousedown.stop @touchstart.stop @pointerdown.stop>
     <svg ref="svgRef" :width="width" :height="height" class="overflow-visible">
       <defs>
@@ -56,6 +56,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const svgRef = ref<SVGSVGElement | null>(null);
 const zoomLayer = ref<SVGGElement | null>(null);
+const containerRef = ref<HTMLDivElement | null>(null);
 
 let simulation: d3.Simulation<d3.SimulationNodeDatum, undefined> | null = null;
 
@@ -242,13 +243,11 @@ const render = () => {
         .style("cursor", "grab")
         .on("mousedown", (event: any) => {
             console.log("Rect mousedown");
-            event.stopPropagation();
-            event.stopImmediatePropagation();
+            // Don't stop propagation - let event bubble to parent g for drag
         })
         .on("pointerdown", (event: any) => {
             console.log("Rect pointerdown");
-            event.stopPropagation();
-            event.stopImmediatePropagation();
+            // Don't stop propagation - let event bubble to parent g for drag
         });
 
     // Initial state arrow
@@ -384,6 +383,29 @@ const render = () => {
 
 onMounted(() => {
    render();
+   
+   // Add capture-phase listeners to intercept events before Slidev
+   if (containerRef.value) {
+       // Capture phase: just log, don't stop - let events reach children
+       containerRef.value.addEventListener('mousedown', (e) => {
+           console.log('Container mousedown (capture)');
+           // Don't stopPropagation here - let it reach the nodes
+       }, { capture: true });
+       containerRef.value.addEventListener('pointerdown', (e) => {
+           console.log('Container pointerdown (capture)');
+           // Don't stopPropagation here - let it reach the nodes
+       }, { capture: true });
+       
+       // Bubble phase: stop propagation after children have handled it
+       containerRef.value.addEventListener('mousedown', (e) => {
+           console.log('Container mousedown (bubble) - stopping propagation');
+           e.stopPropagation();
+       }, { capture: false });
+       containerRef.value.addEventListener('pointerdown', (e) => {
+           console.log('Container pointerdown (bubble) - stopping propagation');
+           e.stopPropagation();
+       }, { capture: false });
+   }
 });
 
 watch(() => [props.states, props.transitions, props.width, props.height], () => {
@@ -392,5 +414,19 @@ watch(() => [props.states, props.transitions, props.width, props.height], () => 
 </script>
 
 <style scoped>
-/* No extra css needed */
+.transition-system-container {
+  position: relative;
+  z-index: 100;
+  pointer-events: auto !important;
+}
+.transition-system-container svg {
+  pointer-events: auto !important;
+}
+.transition-system-container .node-group {
+  pointer-events: auto !important;
+  cursor: grab;
+}
+.transition-system-container .node-group:active {
+  cursor: grabbing;
+}
 </style>
