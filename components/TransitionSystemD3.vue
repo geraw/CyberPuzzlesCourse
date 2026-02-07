@@ -1,5 +1,6 @@
 <template>
-  <div class="transition-system-container flex justify-center items-center mt-8">
+  <div class="transition-system-container flex justify-center items-center mt-8"
+       @mousedown.stop @touchstart.stop @pointerdown.stop>
     <svg ref="svgRef" :width="width" :height="height" class="overflow-visible">
       <defs>
         <marker id="arrowhead-ts-d3" markerWidth="10" markerHeight="7" 
@@ -162,20 +163,25 @@ const render = () => {
 
     // Drag handlers (defined before use)
     function dragstarted(event: any, d: any) {
-        if (!event.active) simulation?.alphaTarget(0.3).restart();
+        console.log("Drag started", d);
+        if (!event.active && simulation) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
     }
     function dragged(event: any, d: any) {
+        console.log("Dragging", event.x, event.y);
         d.fx = event.x;
         d.fy = event.y;
+        d.x = event.x;
+        d.y = event.y;
     }
     function dragended(event: any, d: any) {
-        if (!event.active) simulation?.alphaTarget(0);
+        console.log("Drag ended");
+        if (!event.active && simulation) simulation.alphaTarget(0);
     }
 
     // Drag behavior
-    const dragBehavior = d3.drag()
+    const dragBehavior = d3.drag<SVGGElement, any>()
         .on("start", dragstarted)
         .on("drag", dragged)
         .on("end", dragended);
@@ -219,6 +225,8 @@ const render = () => {
         .append("g")
         .attr("class", "node-group")
         .call(dragBehavior);
+    
+    console.log("Nodes created with drag:", nodeSelection.size());
 
     // Node Rectangle
     nodeSelection.append("rect")
@@ -230,7 +238,18 @@ const render = () => {
         .attr("ry", 5)
         .attr("fill", "#FFF59D")
         .attr("stroke", "#000")
-        .attr("stroke-width", 2);
+        .attr("stroke-width", 2)
+        .style("cursor", "grab")
+        .on("mousedown", (event: any) => {
+            console.log("Rect mousedown");
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+        })
+        .on("pointerdown", (event: any) => {
+            console.log("Rect pointerdown");
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+        });
 
     // Initial state arrow
     nodeSelection.filter(d => d.initial).append("path")
@@ -253,6 +272,7 @@ const render = () => {
         .style("width", "100%")
         .style("height", "100%")
         .style("font-weight", "bold")
+        .style("pointer-events", "none")
         .html((d: any) => renderMath(d.text || d.name || d.id));
 
     // Label (Propositions - Below Right)
