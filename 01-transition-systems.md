@@ -71,13 +71,13 @@ info: |
 
 </div>
 
-<div class="flex items-center justify-center">
+<div class="flex flex-col items-center justify-start -mt-30">
 
 <TransitionSystemD3  
   :states="[
-    { id: 's0', text: '$s_0$', label: '$\\{p\\}$',  initial: true },
-    { id: 's1', text: '$s_1$', label: '$\\{q\\}$'},
-    { id: 's2', text: '$s_2$', label: '$\\{p,q\\}$'}
+    { id: 's0', text: '$s_0$', label: '$\\{p\\}$', initial: true, x: 442, y: 202 },
+    { id: 's1', text: '$s_1$', label: '$\\{q\\}$', x: 229, y: 271 },
+    { id: 's2', text: '$s_2$', label: '$\\{p,q\\}$', x: 269, y: 136 }
   ]"
   :transitions="[
     { source: 's0', target: 's1', action: '$\\alpha$' },
@@ -85,27 +85,24 @@ info: |
     { source: 's2', target: 's0', action: '$\\gamma$' },
     { source: 's2', target: 's2', action: '$\\delta$' }
   ]"
-  :auto="true"
-  :width="300"
-  :height="300" 
 />
 
+<div dir="ltr" class="text-xs text-center -mt-16">
+
+$S = \{s_0, s_1, s_2\}$, $\mathit{Act} = \{\alpha, \beta, \gamma, \delta\}$, $I = \{s_0\}$, $\mathit{AP} = \{p, q\}$
+
+$\to = \{(s_0, \alpha, s_1), (s_1, \beta, s_2), (s_2, \gamma, s_0), (s_2, \delta, s_2)\}$
+
+$L(s_0) = \{p\}, L(s_1) = \{q\}, L(s_2) = \{p,q\}$
+
+</div>
+
 </div>
 
 </div>
 
 ---
 
-# דוגמה: מערכת מעברים פשוטה
-
-שקול את המערכת הבאה עבור משתנה $x \in \{0, 1\}$:
-
-- **מצבים:** $S = \{s_0, s_1\}$
-- **מצבים התחלתיים:** $I = \{s_0\}$
-- **מעברים:** $(s_0, \text{inc}, s_1), (s_1, \text{dec}, s_0)$
-- **תיוג:** $L(s_0) = \{x=0\}$, $L(s_1) = \{x=1\}$
-
----
 
 # דוגמה: מערכת מעברים אינסופית
 

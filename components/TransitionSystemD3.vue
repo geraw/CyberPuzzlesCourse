@@ -3,9 +3,9 @@
        @mousedown.stop @touchstart.stop @pointerdown.stop>
     <svg ref="svgRef" :width="width" :height="height" class="overflow-visible">
       <defs>
-        <marker id="arrowhead-ts-d3" markerWidth="10" markerHeight="7" 
-          refX="9" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+        <marker id="arrowhead-ts-d3" markerWidth="7" markerHeight="5" 
+          refX="6" refY="2.5" orient="auto">
+          <polygon points="0 0, 7 2.5, 0 5" fill="#333" />
         </marker>
       </defs>
       <g ref="zoomLayer">
@@ -137,7 +137,8 @@ const render = () => {
        }
        
        const loopWid = 30;
-       const spread = Math.PI / 8; 
+       // Wider spread for a more circular loop
+       const spread = Math.PI / 5; 
        const a1 = angle - spread;
        const a2 = angle + spread;
        
@@ -149,7 +150,8 @@ const render = () => {
        const x2 = x + p2.x;
        const y2 = y + p2.y;
        
-       const cpDist = 60;
+       // Larger control point distance for a rounder loop
+       const cpDist = 80;
        const cx1 = x + Math.cos(a1) * cpDist;
        const cy1 = y + Math.sin(a1) * cpDist;
        const cx2 = x + Math.cos(a2) * cpDist;
@@ -164,21 +166,33 @@ const render = () => {
 
     // Drag handlers (defined before use)
     function dragstarted(event: any, d: any) {
-        console.log("Drag started", d);
         if (!event.active && simulation) simulation.alphaTarget(0.3).restart();
         d.fx = d.x;
         d.fy = d.y;
     }
     function dragged(event: any, d: any) {
-        console.log("Dragging", event.x, event.y);
         d.fx = event.x;
         d.fy = event.y;
         d.x = event.x;
         d.y = event.y;
     }
     function dragended(event: any, d: any) {
-        console.log("Drag ended");
         if (!event.active && simulation) simulation.alphaTarget(0);
+    }
+    
+    // Right-click handler to print current coordinates
+    function printCoordinates(event: MouseEvent) {
+        event.preventDefault();
+        const statesCode = nodes.map(n => {
+            const parts = [`id: '${n.id}'`];
+            if (n.text) parts.push(`text: '${n.text}'`);
+            if (n.label) parts.push(`label: '${n.label}'`);
+            if (n.initial) parts.push(`initial: true`);
+            parts.push(`x: ${Math.round(n.x!)}`);
+            parts.push(`y: ${Math.round(n.y!)}`);
+            return `    { ${parts.join(', ')} }`;
+        }).join(',\n');
+        console.log(`:states="[\n${statesCode}\n]"`);
     }
 
     // Drag behavior
@@ -203,8 +217,8 @@ const render = () => {
 
     // Link Labels (foreignObject) - keep reference to foreignObject for positioning
     const linkLabelFOs = linkSelection.append("foreignObject")
-        .attr("width", 40)
-        .attr("height", 30)
+        .attr("width", 24)
+        .attr("height", 20)
         .style("overflow", "visible");
     
     // Inner div for styling and KaTeX content
@@ -214,8 +228,10 @@ const render = () => {
         .style("align-items", "center")
         .style("width", "100%")
         .style("height", "100%")
-        .style("font-size", "14px")
+        .style("font-size", "12px")
         .style("background-color", "white")
+        .style("padding", "1px 3px")
+        .style("border-radius", "2px")
         .html((d: any) => d.action ? renderMath(d.action) : "");
 
     // Draw Nodes
@@ -241,14 +257,7 @@ const render = () => {
         .attr("stroke", "#000")
         .attr("stroke-width", 2)
         .style("cursor", "grab")
-        .on("mousedown", (event: any) => {
-            console.log("Rect mousedown");
-            // Don't stop propagation - let event bubble to parent g for drag
-        })
-        .on("pointerdown", (event: any) => {
-            console.log("Rect pointerdown");
-            // Don't stop propagation - let event bubble to parent g for drag
-        });
+        .on("contextmenu", printCoordinates);
 
     // Initial state arrow
     nodeSelection.filter(d => d.initial).append("path")
@@ -386,23 +395,11 @@ onMounted(() => {
    
    // Add capture-phase listeners to intercept events before Slidev
    if (containerRef.value) {
-       // Capture phase: just log, don't stop - let events reach children
-       containerRef.value.addEventListener('mousedown', (e) => {
-           console.log('Container mousedown (capture)');
-           // Don't stopPropagation here - let it reach the nodes
-       }, { capture: true });
-       containerRef.value.addEventListener('pointerdown', (e) => {
-           console.log('Container pointerdown (capture)');
-           // Don't stopPropagation here - let it reach the nodes
-       }, { capture: true });
-       
        // Bubble phase: stop propagation after children have handled it
        containerRef.value.addEventListener('mousedown', (e) => {
-           console.log('Container mousedown (bubble) - stopping propagation');
            e.stopPropagation();
        }, { capture: false });
        containerRef.value.addEventListener('pointerdown', (e) => {
-           console.log('Container pointerdown (bubble) - stopping propagation');
            e.stopPropagation();
        }, { capture: false });
    }
