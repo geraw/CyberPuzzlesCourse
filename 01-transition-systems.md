@@ -28,24 +28,17 @@ info: |
 
 # נושאי הקורס 
 
-<VennDiagram 
-  annotationText="נתחיל כאן"
-  :annotationX="100"
-  :annotationY="190"
-  :annotationRotate="0"
-  :arrowPath="'M40,195 Q40,240 90,280'"
-  :topText="['שפות לתיאור', 'מערכות', '(תגובתיות)']"
-  :leftText="[ 'אלגוריתמים', 'לאימות', 'model-checking']" 
-  :rightText="['שפות לתיאור', 'דרישות', '(תכונות של', 'מערכות)']"
-/>
-
+<div class="flex justify-center">
+  <img src="/images/course_topics_diagram_final.png" class="h-110 w-140"  /> 
+</div>
+ 
 ---
 
 #  בדיקות מודל (Model Checking)
-
+ 
 
 <div class="flex justify-center">
-  <img src="/images/model-checking-4.png" class="h-110" />
+  <img src="/images/model-checking-4.png" class="h-110 w-180"  /> 
 </div>
 
 
@@ -104,20 +97,21 @@ $L(s_0) = \{p\}, L(s_1) = \{q\}, L(s_2) = \{p,q\}$
 ---
 
 
-# דוגמה: מערכת מעברים אינסופית
+# דוגמה: קוביה הונגרית
 
-* קבוצת המצבים היא קבוצת המספרים הטבעיים (כולל 0): $S = \mathbb{N}$
-* שתי פעולות: הגדלה ב-1 וכפל ב-2: $Act = \{inc, double\}$
+* קבוצת המצבים היא אוסף הקונפיגורציות האפשריות של הקוביה: $S$ (גודל המרחב כ-$4.3 \times 10^{19}$)
+* פעולות: סיבוב של אחת הפאות ב-90 מעלות: $Act = \{U, D, L, R, F, B\}$
 * פונקציית המעבר $\rightarrow \subseteq S \times Act \times S$:
-    * (פעולת ההגדלה) $(s, inc, s+1) \quad \forall s \in \mathbb{N}$
-    * (פעולת הכפל) $(s, double, 2s) \quad \forall s \in \mathbb{N}$
-* המצב ההתחלתי הוא 0: $I = \{0\}$
-* קבוצת פסוקים אטומים המכילה פסוק יחיד $P$: $AP = \{P\}$
+    * לכל מצב $s$ ופעולה $\alpha$, המצב הבא הוא התוצאה של הפעלת הסיבוב $\alpha$ על $s$.
+* המצב ההתחלתי הוא קונפיגורציה מבולגנת נתונה: $I = \{s_{start}\}$
+* קבוצת פסוקים אטומים המכילה פסוק יחיד "מסודר": $AP = \{Sorted\}$
 * פונקציית התיוג:
-  $$ L(s) = \begin{cases} \{P\}, & \text{if } \exists k \ge 0 \text{ s.t. } s = 3^k \\ \emptyset, & \text{otherwise} \end{cases} $$
+  $$ L(s) = \begin{cases} \{Sorted\}, & \text{if } s \text{ is solved} \\ \emptyset, & \text{otherwise} \end{cases} $$
 
 <div class="mt-8 p-4 bg-yellow-100 rounded text-center">
-  <b>שאלה:</b> האם קיימת סדרת פעולות שמובילה למצב מתוייג עם $P$ (כלומר, חזקת 3)?
+
+  <b>שאלה:</b> האם קיימת סדרת פעולות שמובילה למצב מתוייג עם $Sorted$? (כן, לכל היותר 20 מהלכים)
+
 </div>
 
 ---
