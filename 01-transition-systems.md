@@ -141,51 +141,60 @@ $$ s = \langle (p_0, r_0), (p_1, r_1), \dots, (p_7, r_7) \rangle $$
 
 **מיפוי הפינות (דוגמה):**
 
-<div class="grid grid-cols-3 gap-1 text-center font-mono text-xs mb-4">
-  <!-- Top: Up -->
-  <div></div>
-  <div class="border border-gray-400 p-1 bg-yellow-100">
-    <div>2&nbsp;&nbsp;3</div>
-    <div>Up</div>
-    <div>0&nbsp;&nbsp;1</div>
-  </div>
-  <div></div>
+<div class="grid grid-cols-2 gap-8 items-center justify-center">
 
-  <!-- Mid: L F R B -->
-  <div class="border border-gray-400 p-1 bg-orange-100">
-    <div>2&nbsp;&nbsp;0</div>
-    <div>Left</div>
-    <div>6&nbsp;&nbsp;4</div>
-  </div>
-  <div class="border border-gray-400 p-1 bg-green-100">
-    <div>0&nbsp;&nbsp;1</div>
-    <div>Front</div>
-    <div>4&nbsp;&nbsp;5</div>
-  </div>
-  <div class="border border-gray-400 p-1 bg-red-100">
-    <div>1&nbsp;&nbsp;3</div>
-    <div>Right</div>
-    <div>5&nbsp;&nbsp;7</div>
-  </div>
+<div class="flex flex-col items-center">
+  <div class="text-xs font-bold mb-2">מצב לדוגמה (אחרי $R$):</div>
+  <svg width="140" height="150" viewBox="0 0 100 110">
+     <g stroke="black" stroke-width="0.5" stroke-linejoin="round">
+      <!-- UP Face -->
+      <!-- Left col (0, 2) remains White -->
+      <path d="M25 22.5 L0 35 L25 47.5 L50 35 Z" fill="white"/>
+      <path d="M50 35 L25 47.5 L50 60 L75 47.5 Z" fill="white"/>
+      
+      <!-- Right col (1, 3) comes from Front (Green) -->
+      <path d="M75 22.5 L50 35 L75 47.5 L100 35 Z" fill="#22c55e"/> <!-- Back-Right -->
+      <path d="M50 35 L25 47.5 L50 60 L75 47.5 Z" fill="#22c55e"/> <!-- Front-Right -->
+      
+      <!-- FRONT Face -->
+      <!-- Left col (0, 4) remains Green -->
+      <path d="M0 35 L25 47.5 L25 72.5 L0 60 Z" fill="#22c55e"/> <!-- Top-Left -->
+      <path d="M0 60 L25 72.5 L25 97.5 L0 85 Z" fill="#22c55e"/> <!-- Bot-Left -->
 
-  <!-- Bot: Down -->
-  <div></div>
-  <div class="border border-gray-400 p-1 bg-white">
-    <div>4&nbsp;&nbsp;5</div>
-    <div>Down</div>
-    <div>6&nbsp;&nbsp;7</div>
-  </div>
-  <div class="border border-gray-400 p-1 bg-blue-100">
-    <div>3&nbsp;&nbsp;2</div>
-    <div>Back</div>
-    <div>7&nbsp;&nbsp;6</div>
-  </div>
+      <!-- Right col (1, 5) comes from Down (Yellow) -->
+      <path d="M25 47.5 L50 60 L50 85 L25 72.5 Z" fill="#eab308"/> <!-- Top-Right -->
+      <path d="M25 72.5 L50 85 L50 110 L25 97.5 Z" fill="#eab308"/> <!-- Bot-Right -->
+
+      <!-- RIGHT Face (Red) -->
+      <path d="M50 60 L75 47.5 L75 72.5 L50 85 Z" fill="#ef4444"/>
+      <path d="M75 47.5 L100 35 L100 60 L75 72.5 Z" fill="#ef4444"/>
+      <path d="M50 85 L75 72.5 L75 97.5 L50 110 Z" fill="#ef4444"/>
+      <path d="M75 72.5 L100 60 L100 85 L75 97.5 Z" fill="#ef4444"/>
+    </g>
+    <!-- Numbers overlay -->
+    <g font-size="5" font-family="sans-serif" text-anchor="middle" fill="black" font-weight="bold" stroke="white" stroke-width="0.2">
+      <text x="50" y="25">2</text>
+      <text x="25" y="37">0</text>
+      <text x="90" y="60">3</text>
+      <text x="60" y="75">1</text>
+      <text x="25" y="85">4</text>
+      <text x="60" y="97">5</text>
+      <text x="90" y="85">7</text>
+    </g>
+  </svg>
 </div>
 
-<div class="bg-blue-50 p-2 rounded text-xs w-full">
-  <b>דוגמה:</b> פינה מס' $0$ היא הפינה הקדמית-שמאלית-עליונה (Front-Up-Left).
-  <br>
-  אם $s = \langle (3, 1), \dots \rangle$, זה אומר שבפינה $0$ נמצאת הקוביה שהייתה במקור בפינה $3$, והיא מסובבת "פעם אחת".
+<div class="text-sm bg-blue-50 p-3 rounded">
+  <b>וקטור המצב $s$:</b>
+  $$ s = \langle (0,0), \color{red}{(5,1)}, (2,0), \color{red}{(1,2)}, (4,0), \color{red}{(7,2)}, (6,0), \color{red}{(3,1)} \rangle $$
+  
+  <b>הסבר:</b>
+  <ul class="list-disc pl-4 mt-2 text-xs">
+    <li>במיקום <b>1</b> (קדמי-ימני-עליון) נמצאת כעת קוביה מס' <b>5</b> (שהגיעה מלמטה).</li>
+    <li>האוריינטציה שלה היא <b>1</b> (מסובבת עם השעון), כי הצבע הצהוב (שהיה למטה) פונה כעת ימינה.</li>
+  </ul>
+</div>
+
 </div>
 
 </div>
@@ -362,3 +371,213 @@ $$ s = \langle (p_0, r_0), (p_1, r_1), \dots, (p_7, r_7) \rangle $$
 * נרצה לבדוק אם כל (סדרות התיוגים של) הריצות של המערכת "חוקיות".
 * **שקילות:** שתי מערכות מעברים יקראו שקולות אם קבוצת הסדרות הנ"ל שוות.
 
+---
+
+<style>
+.slidev-layout { direction: rtl; text-align: right; }
+.katex-display, .katex { direction: ltr; } /* נוסחאות נשארות LTR */
+code, pre { direction: ltr; text-align: left; }
+.small { font-size: 0.9em; opacity: 0.95; }
+.note { opacity: 0.8; font-size: 0.9em; }
+.card {
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 14px;
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.04);
+}
+.grid2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; align-items: center; }
+</style>
+
+# מודל לקובייה הונגרית 2×2  
+## מערכת מעברים — מצבים, פעולות, והדגמות ויזואליות
+
+<div class="mt-6 grid2">
+  <div class="card">
+    <div class="small">
+      מה נראה היום:
+      <ul>
+        <li>איך מייצגים מצב של 2×2 בצורה קומפקטית</li>
+        <li>איך מגדירים פעולות U / R / F כמיפוי דטרמיניסטי בין מצבים</li>
+        <li>הדגמות: קובייה 3D אינטראקטיבית + אנימציות SVG של המהלכים</li>
+      </ul>
+    </div>
+    <div class="note">לא נכנסים לחבורות/תיאוריה עמוקה—רק מודל שימושי וברור.</div>
+  </div>
+
+  <div class="card">
+    <Cube2x2 class="h-64" />
+    <div class="note mt-2">גרור עם העכבר לסיבוב. גלגלת = זום.</div>
+  </div>
+</div>
+
+---
+
+# אינטואיציה: Slots מול Pieces
+
+<div class="card">
+<ul>
+  <li><b>Slots (0..7)</b> — 8 מיקומים פיזיים קבועים (פינות) על הקובייה.</li>
+  <li><b>Pieces (0..7)</b> — 8 חתיכות הפינה עצמן.</li>
+</ul>
+
+כל מצב אומר:
+<ul>
+  <li>איזו חתיכה יושבת בכל פינה</li>
+  <li>ואיך היא “מסובבת” בתוך אותה פינה</li>
+</ul>
+</div>
+
+---
+
+# מספור הפינות (Slots) — בחירה קבועה
+
+<div class="card">
+נשתמש במספור סטנדרטי לפי מצב פתור (רק כדי שיהיה עקבי):
+
+<ul>
+  <li>0 = UFR (למעלה־קדימה־ימין)</li>
+  <li>1 = URB (למעלה־ימין־אחורה)</li>
+  <li>2 = UBL (למעלה־אחורה־שמאל)</li>
+  <li>3 = ULF (למעלה־שמאל־קדימה)</li>
+  <li>4 = DFR (למטה־קדימה־ימין)</li>
+  <li>5 = DRB (למטה־ימין־אחורה)</li>
+  <li>6 = DBL (למטה־אחורה־שמאל)</li>
+  <li>7 = DLF (למטה־שמאל־קדימה)</li>
+</ul>
+</div>
+
+---
+
+# ייצוג מצב
+
+<div class="card">
+מצב הוא 8־ייה של זוגות:
+\[
+s = \langle (p_0,r_0), (p_1,r_1), \dots, (p_7,r_7) \rangle
+\]
+
+לכל פינה \(i\):
+<ul>
+  <li>\(p_i \in \{0..7\}\): איזו <b>חתיכה</b> נמצאת כרגע ב־slot \(i\)</li>
+  <li>\(r_i \in \{0,1,2\}\): האוריינטציה שלה (Twist) מודולו 3</li>
+</ul>
+</div>
+
+<div class="note mt-2">
+אפשר לחשוב על זה כמו "לוח" עם 8 תאים: בכל תא כתוב מי יושב שם + איך הוא מסובב.
+</div>
+
+---
+
+# פעולות: U / R / F
+
+<div class="card">
+נבחר את קבוצת הפעולות:
+\[
+Act=\{U,F,R\}
+\]
+
+כל פעולה:
+<ul>
+  <li>מחליפה מיקומים של <b>4 פינות</b> (מחזור)</li>
+  <li>ומעדכנת אוריינטציה של אותן פינות ב־\(\pm 1 \pmod 3\) לפי הכללים של הקובייה</li>
+</ul>
+</div>
+
+---
+
+# “מה זה אומר פורמלית?” (בלי להעמיס)
+
+<div class="card">
+נגדיר לכל פעולה \(a\) פונקציה דטרמיניסטית:
+\[
+\delta_a: S \to S
+\]
+
+ואז המעבר הוא פשוט:
+\[
+s \xrightarrow{a} s' \iff s'=\delta_a(s)
+\]
+
+הפואנטה: זה בדיוק "מכונת מצבים" שבה כל צעד הוא U/R/F.
+</div>
+
+---
+
+# הדגמה אינטראקטיבית: הקובייה מסתובבת בלייב
+
+<div class="card">
+<Cube2x2 class="h-96" />
+</div>
+
+<div class="note mt-2">
+זה שקף “להרגיש את המודל”: פעולה היא פשוט מעבר—אפשר לחבר אחר כך גם כפתורים שמפעילים U/R/F על המצב.
+</div>
+
+---
+
+# אנימציית מהלך U (סיבוב שכבת העליונה)
+
+<div class="grid2">
+  <div class="card">
+    <h3>U</h3>
+    <ul>
+      <li>מסובב את ארבע פינות השכבה העליונה במחזור.</li>
+      <li>ויזואלית: הריבוע העליון מסתובב.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <MoveU class="w-full h-72" />
+  </div>
+</div>
+
+---
+
+# אנימציית מהלך R (סיבוב הפאה הימנית)
+
+<div class="grid2">
+  <div class="card">
+    <h3>R</h3>
+    <ul>
+      <li>מסובב את ארבע הפינות שעל "עמודת ימין".</li>
+      <li>ויזואלית: הצד הימני מתחלף במחזור.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <MoveR class="w-full h-72" />
+  </div>
+</div>
+
+---
+
+# אנימציית מהלך F (סיבוב הפאה הקדמית)
+
+<div class="grid2">
+  <div class="card">
+    <h3>F</h3>
+    <ul>
+      <li>מסובב את ארבע הפינות של הפאה הקדמית.</li>
+      <li>ויזואלית: השורה הקדמית מתחלפת במחזור.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <MoveF class="w-full h-72" />
+  </div>
+</div>
+
+---
+
+# סיכום
+
+<div class="card">
+מה קיבלנו:
+<ul>
+  <li><b>מצב</b> = 8־ייה של (איזה piece, איזה twist).</li>
+  <li><b>פעולה</b> = מעבר דטרמיניסטי שמזיז 4 פינות ומעדכן twist.</li>
+  <li><b>מערכת מעברים</b> = בסיס מצוין לחיפוש מסלולים, בדיקת תכונות, או הדמיה.</li>
+</ul>
+</div>
+
+<div class="note mt-2">
+אם תרצה בשלב הבא: אני יכול להוסיף לשקף האינטראקטיבי כפתורים שמפעילים U/R/F על מצב פנימי ומציגים את המצב בטבלה.
+</div>
