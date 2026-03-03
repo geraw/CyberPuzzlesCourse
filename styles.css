@@ -129,9 +129,9 @@ strong {
 }
 
 /* Allow Monaco runner outputs to have multiple lines */
-.slidev-monaco-runner-output pre,
-.slidev-monaco-runner-output code,
-.slidev-monaco-runner-output {
-  white-space: pre !important;
+.slidev-runner-output pre,
+.slidev-runner-output code,
+.slidev-runner-output {
+  white-space: pre-wrap !important;
   font-family: inherit;
 }
