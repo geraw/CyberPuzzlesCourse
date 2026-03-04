@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted } from 'vue'
+import { onSlideEnter } from '@slidev/client'
 
 const props = defineProps({
   target: {
@@ -12,12 +13,15 @@ const props = defineProps({
   }
 })
 
-onMounted(() => {
+const scrollDown = () => {
   setTimeout(() => {
     const el = document.getElementById(props.target)
     if (el) el.scrollTop = el.scrollHeight 
   }, props.delay)
-})
+}
+
+onMounted(scrollDown)
+onSlideEnter(scrollDown)
 </script>
 
 <template>
