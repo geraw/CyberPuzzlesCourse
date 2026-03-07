@@ -366,7 +366,7 @@ $L: \{RH\} \to \emptyset \to \emptyset \to \{TH\} \to \{TH,RH\}$
 
 * **גישה מבוססת פעולות (Action-based):** רק הפעולות המבוצעות נצפות מבחוץ. דטרמיניזם מחייב שלכל מצב $s$ ופעולה $\alpha$ יהיה **לכל היותר** מעבר יוצא אחד המתויג ב-$\alpha$.
 
-* **גישה מבוססת מצבים (State-based):** הפעולות מתעלמות, ורק הפסוקים האטומיים המתקיימים במצב הנוכחי נראים. דטרמיניזם מחייב שלכל מצב $s$ ותיוג $A \in 2^{AP}$ יהיה **לכל היותר** מעבר יוצא אחד למצב עם תיוג $A$.
+* **גישה מבוססת תיוגים (Label-based):** הפעולות נסתרות, ורק הפסוקים האטומיים המתקיימים במצב הנוכחי נראים. דטרמיניזם מחייב שלכל מצב $s$ ותיוג $A \in 2^{AP}$ יהיה **לכל היותר** מעבר יוצא אחד למצב עם תיוג $A$.
 
 בשני המקרים, נדרש שיהיה **לכל היותר מצב התחלתי אחד**.
 
@@ -374,7 +374,7 @@ $L: \{RH\} \to \emptyset \to \emptyset \to \{TH\} \to \{TH,RH\}$
 
 # הגדרה: מערכת מעברים דטרמיניסטית
 
-<img src="/deterministic_observers.png" class="absolute right-95 bottom-0 w-55" />
+<img src="/deterministic_observers.png" class="absolute right-95 bottom-5 w-55" />
 
 תהי $TS = (S, Act, \to, I, AP, L)$ מערכת מעברים.
 
@@ -384,7 +384,7 @@ $L: \{RH\} \to \emptyset \to \emptyset \to \{TH\} \to \{TH,RH\}$
 
 <div class="border-2 border-green-400 bg-green-50 rounded-lg p-3" dir="rtl" align="center">
 
-**Action-deterministic**
+**דטרמיניסטית על פי פעולות**
 
 $|I| \le 1$ וגם <br> <br> $|Post(s, \alpha)| \le 1$ <br><br>
 
@@ -397,7 +397,7 @@ $|I| \le 1$ וגם <br> <br> $|Post(s, \alpha)| \le 1$ <br><br>
 
 <div class="border-2 border-purple-400 bg-purple-50 rounded-lg p-3" dir="rtl" align="center">
 
-**AP-deterministic**
+**דטרמיניסטית על פי תיוגים**
 
 $|I| \le 1$ וגם <br> <br> $|Post(s) \cap \{ s' \in S \mid L(s') = A \}| \le 1$ <br><br>
 
@@ -411,15 +411,64 @@ $|I| \le 1$ וגם <br> <br> $|Post(s) \cap \{ s' \in S \mid L(s') = A \}| \le 1
 
 ---
 
-# סמנטיקה: ריצות ומקטעי ריצות
+# מקטעי ריצה (Execution Fragments)
+
+עד כה תיארנו את התנהגות מערכת המעברים באופן אינטואיטיבי. כעת נפרמל זאת באמצעות המושג **ריצה** (execution/run). ריצה נוצרת מתוך הכרעת האי-דטרמיניזם האפשרי במערכת, ומתארת התנהגות אפשרית אחת.
+
+תהי $TS = (S, Act, \to, I, AP, L)$ מערכת מעברים.
 
 * **מקטע ריצה סופי:** רצף מתחלף של מצבים ופעולות המסתיים במצב:
-  $$\rho = s_0 \alpha_1 s_1 \alpha_2 \dots \alpha_n s_n$$
-  כך ש- $s_i \xrightarrow{\alpha_{i+1}} s_{i+1}$ לכל $0 \le i < n$.
+  $$\varrho = s_0 \xrightarrow{\alpha_1} s_1 \xrightarrow{\alpha_2} \dots \xrightarrow{\alpha_n} s_n$$
+  כך ש- $s_i \xrightarrow{\alpha_{i+1}} s_{i+1}$ לכל $0 \le i < n$. **האורך** של מקטע זה הוא $n$.
 
 * **מקטע ריצה אינסופי:** רצף אינסופי של מצבים ופעולות:
-  $$\rho = s_0 \alpha_1 s_1 \alpha_2 \dots$$
+  $$\rho = s_0 \xrightarrow{\alpha_1} s_1 \xrightarrow{\alpha_2} s_2 \xrightarrow{\alpha_3} \dots$$
   כך ש- $s_i \xrightarrow{\alpha_{i+1}} s_{i+1}$ לכל $i \ge 0$.
+
+---
+
+# הערות על מקטעי ריצה
+
+* הרצף $s$ (מצב בודד) הוא מקטע ריצה סופי חוקי באורך $n=0$.
+
+* כל קידומת באורך אי-זוגי של מקטע ריצה אינסופי היא מקטע ריצה סופי.
+
+* מעתה, המונח **"מקטע ריצה"** יתייחס הן למקטע סופי והן לאינסופי.
+
+---
+
+# מקטעי ריצה מקסימליים והתחלתיים
+
+<img src="/maximal_initial_fragments.png" class="absolute right-95 bottom-5 w-55" />
+
+מקטע ריצה נקרא **מקסימלי** כאשר לא ניתן להאריך אותו, ו**התחלתי** כאשר הוא מתחיל ממצב התחלתי:
+
+<div class="grid grid-cols-2 gap-6 mt-4">
+
+<div>
+
+<div class="border-2 border-green-400 bg-green-50 rounded-lg p-3" dir="rtl" align="center">
+
+**מקטע ריצה מקסימלי**
+
+מקטע ריצה **סופי** המסתיים במצב **סופני**, <br> או מקטע ריצה **אינסופי**.
+
+</div>
+
+</div>
+<div>
+
+<div class="border-2 border-blue-400 bg-blue-50 rounded-lg p-3" dir="rtl" align="center">
+
+**מקטע ריצה התחלתי**
+
+מקטע ריצה שמתחיל במצב התחלתי, <br> כלומר $s_0 \in I$.
+
+</div>
+
+</div>
+
+</div>
 
 ---
 
