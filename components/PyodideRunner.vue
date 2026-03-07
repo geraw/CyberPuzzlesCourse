@@ -107,12 +107,12 @@ async function run() {
   gap: 12px;
 }
 .col-code {
-  flex: 1;
+  flex: 3;
   display: flex;
   flex-direction: column;
 }
 .col-output {
-  flex: 1;
+  flex: 2;
   display: flex;
   flex-direction: column;
 }
