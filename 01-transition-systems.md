@@ -94,107 +94,156 @@ $L(s_0) = \{p\}, L(s_1) = \{q\}, L(s_2) = \{p,q\}$
 
 </div>
 
+
+
+
 ---
 
+# התנהגות אינטואיטיבית ואי-דטרמיניזם
 
-# דוגמה: קוביה הונגרית
+לשם נוחות, נסמן $s \xrightarrow{\alpha} s'$ במקום $(s, \alpha, s') \in\ \to$. 
 
-* קבוצת המצבים היא אוסף הקונפיגורציות האפשריות של הקוביה: $S$ (גודל המרחב כ-$4.3 \times 10^{19}$)
-* פעולות: סיבוב של אחת הפאות ב-90 מעלות: $Act = \{U, D, L, R, F, B\}$
-* פונקציית המעבר $\rightarrow \subseteq S \times Act \times S$:
-    * לכל מצב $s$ ופעולה $\alpha$, המצב הבא הוא התוצאה של הפעלת הסיבוב $\alpha$ על $s$.
-* המצב ההתחלתי הוא קונפיגורציה מבולגנת נתונה: $I = \{s_{start}\}$
-* קבוצת פסוקים אטומים המכילה פסוק יחיד "מסודר": $AP = \{Sorted\}$
-* פונקציית התיוג:
-  $$ L(s) = \begin{cases} \{Sorted\}, & \text{if } s \text{ is solved} \\ \emptyset, & \text{otherwise} \end{cases} $$
+ההתנהגות של מערכת מעברים מתוארת באופן הבא:
+
+* המערכת מתחילה במצב התחלתי כלשהו $s_0 \in I$ ומתפתחת על פי יחס המעברים $\to$.
+  
+* בכל שלב, אם $s$ הוא המצב הנוכחי, מעבר יוצא $s \xrightarrow{\alpha} s'$ נבחר באופן אי-דטרמיניסטי ומבוצע.
+  כלומר, הפעולה $\alpha$ מתבצעת והמערכת עוברת מ-$s$ למצב $s'$.
+* תהליך זה חוזר על עצמו במצב $s'$, ומסתיים רק כאשר נתקלים במצב שאין ממנו מעברים יוצאים.
+
+<div class="mt-8 p-4 bg-blue-50 text-base rounded shadow border-l-4 border-blue-500" dir="rtl">
+
+<b>אי-דטרמיניזם, לא הסתברות:</b> <br/>
+חשוב להבין שבמקרה שלמצב יש יותר ממעבר יוצא אחד, המעבר הבא נבחר באופן <b>אי-דטרמיניסטי טהור</b>.
+כלומר, תוצאת הבחירה אינה ידועה מראש, ולכן <b>לא ניתן להביע שום טענה על ההסתברות או הסבירות שמעבר מסוים ייבחר</b>.<br>
+באופן דומה, כאשר קבוצת המצבים ההתחלתיים כוללת יותר ממצב אחד, מצב הפתיחה נבחר אי-דטרמיניסטית.
+
+</div>
+
+---
+
+# פונקציית התיוג (Labeling Function)
+
+פונקציית התיוג $L \colon S \to 2^{AP}$ מקשרת בין קבוצת פסוקים אטומיים $L(s) \in 2^{AP}$ לכל מצב $s \in S$. 
+
+באופן אינטואיטיבי, $L(s)$ מייצגת בדיוק את אותם פסוקים אטומיים $a \in AP$ שמתקיימים במצב $s$.
+
+* בהינתן ש-$\Phi$ היא נוסחת לוגיקה פסוקית, נאמר ש-$s$ מקיים את הנוסחה $\Phi$ אם ההשמה שמושרה על ידי הקבוצה $L(s)$ הופכת את הנוסחה לאמיתית. 
+
+* כלומר, נסמן:
+$$ s \models \Phi \quad \text{iff} \quad L(s) \models \Phi $$   
+
+* **השמה שמושרה על ידי קבוצה:** כל פסוק מקבל ערך True אם הוא שייך לקבוצה, ו-False אם הוא לא שייך לקבוצה.
 
 <div class="mt-8 p-4 bg-yellow-100 rounded text-center">
 
-  <b>שאלה:</b> האם קיימת סדרת פעולות שמובילה למצב מתוייג עם $Sorted$? (כן, לכל היותר 20 מהלכים)
+
+<b>משמעות:</b> פונקציית התיוג מעניקה לשמות המצבים את המשמעות מנקודת המבט של התכונות שניתן להביע על המערכת. היא הופכת את מצבי המערכת מ"סתם משתנים" לייצוג לוגי הניתן לאימות.
 
 </div>
 
+
 ---
 
-# קידוד המצב בקוביה 2x2
+# דוגמה: רובוט במבוך
 
-<div class="grid grid-cols-2 gap-8 text-sm">
+נניח רובוט שנע בתוך מבוך המיוצג כרשת משבצות $4 \times 4$.
+המצבים של המערכת הם הקואורדינטות של הרובוט: $S = \{ (i,j) \mid 1 \le i \le 4, 1 \le j \le 4 \}$.
+פעולות המעבר האפשריות הן תזוזה לאחת מארבעת הכיוונים (למשבצות פנויות בלבד).
+
+נגדיר שני פסוקים אטומיים: $AP = \{\text{TH}, \text{EH}\}$.   (קיצור של- **T**op**H**alf, **R**ight**H**alf)
+
+פונקציית התיוג $L$ מתרגמת את המטריקה של הרשת לתכונות לוגיות פשוטות :
+- רובוט נמצא בחצי העליון של הרשת: $\text{TH} \in L((i,j)) \iff j \ge 3$
+- רובוט נמצא בחצי הימני של הרשת: $\text{RH} \in L((i,j)) \iff i \ge 3$
+
+<div class="grid grid-cols-2 gap-4 mt-6">
 <div>
 
-**המצבים:** $S$ היא קבוצת ה-8-יות של זוגות:
-$$ s = \langle (p_0, r_0), (p_1, r_1), \dots, (p_7, r_7) \rangle $$
+* **לדוגמה:**
+  - $L((4,4)) = \{\text{TH}, \text{RH}\}$
 
-*   **האינדקסים $0..7$:** מייצגים את **8 הפינות הפיזיות** של הקוביה (Slots).
-*   **הערכים $(p_i, r_i)$:**
-    *   $p_i \in \{0..7\}$: איזה קוביה (Piece) נמצאת כרגע בפינה $i$.
-    *   $r_i \in \{0,1,2\}$: האוריינטציה (סיבוב) של הקוביה בפינה $i$.
-        *   $0$: הפאה הראשית (למשל Up/Down) פונה לכיוון $z$ (למעלה/למטה).
-        *   $1$: מסובבת עם השעון.
-        *   $2$: מסובבת נגד השעון.
-
-**הפעולות:** $Act = \{U, F, R\}$
-*   כל פעולה מחליפה מיקומים של 4 קוביות.
-*   ומעדכנת את האוריינטציה שלהן ($r \pm 1 \pmod 3$).
+  - $L((1,1)) = \emptyset$
+  - $L((3,1)) = \{\text{RH}\}$
 
 </div>
-<div class="flex flex-col items-center">
+<div>
 
-**מיפוי הפינות (דוגמה):**
-
-<div class="grid grid-cols-2 gap-8 items-center justify-center">
-
-<div class="flex flex-col items-center">
-  <div class="text-xs font-bold mb-2">מצב לדוגמה (אחרי $R$):</div>
-  <svg width="140" height="150" viewBox="0 0 100 110">
-     <g stroke="black" stroke-width="0.5" stroke-linejoin="round">
-      <!-- UP Face -->
-      <!-- Left col (0, 2) remains White -->
-      <path d="M25 22.5 L0 35 L25 47.5 L50 35 Z" fill="white"/>
-      <path d="M50 35 L25 47.5 L50 60 L75 47.5 Z" fill="white"/>
-      
-      <!-- Right col (1, 3) comes from Front (Green) -->
-      <path d="M75 22.5 L50 35 L75 47.5 L100 35 Z" fill="#22c55e"/> <!-- Back-Right -->
-      <path d="M50 35 L25 47.5 L50 60 L75 47.5 Z" fill="#22c55e"/> <!-- Front-Right -->
-      
-      <!-- FRONT Face -->
-      <!-- Left col (0, 4) remains Green -->
-      <path d="M0 35 L25 47.5 L25 72.5 L0 60 Z" fill="#22c55e"/> <!-- Top-Left -->
-      <path d="M0 60 L25 72.5 L25 97.5 L0 85 Z" fill="#22c55e"/> <!-- Bot-Left -->
-
-      <!-- Right col (1, 5) comes from Down (Yellow) -->
-      <path d="M25 47.5 L50 60 L50 85 L25 72.5 Z" fill="#eab308"/> <!-- Top-Right -->
-      <path d="M25 72.5 L50 85 L50 110 L25 97.5 Z" fill="#eab308"/> <!-- Bot-Right -->
-
-      <!-- RIGHT Face (Red) -->
-      <path d="M50 60 L75 47.5 L75 72.5 L50 85 Z" fill="#ef4444"/>
-      <path d="M75 47.5 L100 35 L100 60 L75 72.5 Z" fill="#ef4444"/>
-      <path d="M50 85 L75 72.5 L75 97.5 L50 110 Z" fill="#ef4444"/>
-      <path d="M75 72.5 L100 60 L100 85 L75 97.5 Z" fill="#ef4444"/>
-    </g>
-    <!-- Numbers overlay -->
-    <g font-size="5" font-family="sans-serif" text-anchor="middle" fill="black" font-weight="bold" stroke="white" stroke-width="0.2">
-      <text x="50" y="25">2</text>
-      <text x="25" y="37">0</text>
-      <text x="90" y="60">3</text>
-      <text x="60" y="75">1</text>
-      <text x="25" y="85">4</text>
-      <text x="60" y="97">5</text>
-      <text x="90" y="85">7</text>
-    </g>
-  </svg>
+* **אימות תכונות:**
+  - ניתן לשאול : 
+"האם הרובוט יכול להגיע למצב  
+$s \models\text{TH} \land \text{RH}$ מבלי לעבור אף פעם במצב  $s \models \neg\text{RH}$?"
+  - הפרדה בין האימות למבנה הפנימי של המערכת
+</div>
 </div>
 
-<div class="text-sm bg-blue-50 p-3 rounded">
-  <b>וקטור המצב $s$:</b>
-  $$ s = \langle (0,0), \color{red}{(5,1)}, (2,0), \color{red}{(1,2)}, (4,0), \color{red}{(7,2)}, (6,0), \color{red}{(3,1)} \rangle $$
-  
-  <b>הסבר:</b>
-  <ul class="list-disc pl-4 mt-2 text-xs">
-    <li>במיקום <b>1</b> (קדמי-ימני-עליון) נמצאת כעת קוביה מס' <b>5</b> (שהגיעה מלמטה).</li>
-    <li>האוריינטציה שלה היא <b>1</b> (מסובבת עם השעון), כי הצבע הצהוב (שהיה למטה) פונה כעת ימינה.</li>
-  </ul>
+---
+
+# דוגמה: מסלול במבוך
+
+נבחן שני מסלולים אפשריים במערכת המעברים של הרובוט מרגע ההתחלה $(3,1)$.
+המטרה: **להגיע ל-$TH \land RH$ (כלומר $i \ge 3, j \ge 3$) מבלי לצאת מה-$RH$ ($i \ge 3$)**.
+
+<div class="grid grid-cols-2 gap-4 mt-4">
+<div>
+
+<div class="bg-green-100 p-2 rounded text-center mb-2 text-sm font-bold border border-green-400">
+✅ מסלול עומד בדרישה
 </div>
 
+<TransitionSystemD3  
+  :width="400" :height="200"
+  :states="[
+    { id: 's0', text: '$(3,1)$', label: '$\\{RH\\}$', initial: true, initialDirection: 'right', x: 200, y: 180 },
+    { id: 's1', text: '$(3,2)$', label: '$\\{RH\\}$', x: 200, y: 90 },
+    { id: 's2', text: '$(3,3)$', label: '$\\{TH, RH\\}$', x: 200, y: 0 }
+  ]"
+  :transitions="[
+    { source: 's0', target: 's1', action: '$Up$' },
+    { source: 's1', target: 's2', action: '$Up$' }
+  ]"
+/>
+
+<div class="text-xs text-center mt-2" dir="ltr">
+
+$L: \{RH\} \to \{RH\} \to \{TH,RH\}$
+
+</div>
+<div class="text-sm text-center mt-1">
+הרובוט נע צפונה פעמיים, נשאר בחצי הימני כל הדרך עד למטרה.
+</div>
+
+</div>
+<div>
+
+<div class="bg-red-100 p-2 rounded text-center mb-2 text-sm font-bold border border-red-400">
+❌ מסלול אינו עומד בדרישה
+</div>
+
+<TransitionSystemD3  
+  :width="400" :height="200"
+  :states="[
+    { id: 's0', text: '$(3,1)$', label: '$\\{RH\\}$', initial: true, initialDirection: 'right',  x: 280, y: 180 },
+    { id: 's1', text: '$(2,1)$', label: '$\\emptyset$', x: 120, y: 180 },
+    { id: 's2', text: '$(2,2)$', label: '$\\emptyset$', x: 120, y: 90 },
+    { id: 's3', text: '$(2,3)$', label: '$\\{TH\\}$', x: 120, y: 0 },
+    { id: 's4', text: '$(3,3)$', label: '$\\{TH, RH\\}$', x: 280, y: 0 }
+  ]"
+  :transitions="[
+    { source: 's0', target: 's1', action: '$Left$' },
+    { source: 's1', target: 's2', action: '$Up$' },
+    { source: 's2', target: 's3', action: '$Up$' },
+    { source: 's3', target: 's4', action: '$Right$' }
+  ]"
+/>
+
+<div class="text-xs text-center mt-2" dir="ltr">
+
+$L: \{RH\} \to \emptyset \to \emptyset \to \{TH\} \to \{TH,RH\}$
+
+</div>
+<div class="text-sm text-center mt-1">
+הרובוט עוקף מכשול דרך החצי השמאלי, תוך הפרת הדרישה.
 </div>
 
 </div>
@@ -202,154 +251,6 @@ $$ s = \langle (p_0, r_0), (p_1, r_1), \dots, (p_7, r_7) \rangle $$
 
 ---
 
-# הגדרת הפעולות (Transition Relations)
-
-<div class="grid grid-cols-3 gap-4 text-sm items-start">
-
-<!-- UP Action -->
-<div class="flex flex-col items-center">
-
-<div class="mb-2 text-center" dir="rtl">
-
-**הפעולה $U$ (Up):** <br /> סיבוב הפאה העליונה.
-
-<div class="text-xs text-right mt-1">
-
-* מיקומים: $0 \to 2 \to 3 \to 1 \to 0$
-* אוריינטציה: ללא שינוי ($+0$)
-
-</div>
-</div>
-
-<svg width="100" height="110" viewBox="0 0 100 110">
-<g stroke="black" stroke-width="0.5" stroke-linejoin="round">
-<path d="M50 10 L25 22.5 L50 35 L75 22.5 Z" fill="white" />
-<path d="M25 22.5 L0 35 L25 47.5 L50 35 Z" fill="white" />
-<path d="M75 22.5 L50 35 L75 47.5 L100 35 Z" fill="white" />
-<path d="M50 35 L25 47.5 L50 60 L75 47.5 Z" fill="white" />
-<path d="M0 35 L25 47.5 L25 72.5 L0 60 Z" fill="#fb923c" />
-<path d="M0 60 L25 72.5 L25 97.5 L0 85 Z" fill="#fb923c" />
-<path d="M25 47.5 L50 60 L50 85 L25 72.5 Z" fill="#4ade80" />
-<path d="M25 72.5 L50 85 L50 110 L25 97.5 Z" fill="#4ade80" />
-<path d="M50 60 L75 47.5 L75 72.5 L50 85 Z" fill="#f87171" />
-<path d="M75 47.5 L100 35 L100 60 L75 72.5 Z" fill="#f87171" />
-<path d="M50 85 L75 72.5 L75 97.5 L50 110 Z" fill="#f87171" />
-<path d="M75 72.5 L100 60 L100 85 L75 97.5 Z" fill="#f87171" />
-<path d="M30 15 Q 50 5, 70 15" stroke="blue" stroke-width="3" fill="none" />
-<polygon points="70,15 62,11 62,19" fill="blue" stroke="none" transform="rotate(-15 70 15)" />
-</g>
-<g font-size="5" font-family="sans-serif" text-anchor="middle" fill="black" font-weight="bold" stroke="white" stroke-width="0.2">
-<text x="50" y="25">2</text>
-<text x="25" y="37">0</text>
-<text x="75" y="37">3</text>
-<text x="50" y="50">1</text>
-</g>
-</svg>
-</div>
-
-<!-- FRONT Action -->
-<div class="flex flex-col items-center">
-
-<div class="mb-2 text-center" dir="rtl">
-
-**הפעולה $F$ (Front):** <br /> סיבוב הפאה הקדמית.
-
-<div class="text-xs text-right mt-1">
-
-* מיקומים: $0 \to 1 \to 5 \to 4 \to 0$
-* אוריינטציה: $\{0,1\} \to -1, \{4,5\} \to +1$
-
-</div>
-</div>
-
-<svg width="100" height="110" viewBox="0 0 100 110">
-<g stroke="black" stroke-width="0.5" stroke-linejoin="round" opacity="0.4">
-<path d="M50 10 L25 22.5 L50 35 L75 22.5 Z" fill="white" />
-<path d="M25 22.5 L0 35 L25 47.5 L50 35 Z" fill="white" />
-<path d="M75 22.5 L50 35 L75 47.5 L100 35 Z" fill="white" />
-<path d="M50 35 L25 47.5 L50 60 L75 47.5 Z" fill="white" />
-<path d="M0 35 L25 47.5 L25 72.5 L0 60 Z" fill="#4ade80" />
-<path d="M25 47.5 L50 60 L50 85 L25 72.5 Z" fill="#4ade80" />
-<path d="M0 60 L25 72.5 L25 97.5 L0 85 Z" fill="#4ade80" />
-<path d="M25 72.5 L50 85 L50 110 L25 97.5 Z" fill="#4ade80" />
-<path d="M50 60 L75 47.5 L75 72.5 L50 85 Z" fill="#f87171" />
-<path d="M75 47.5 L100 35 L100 60 L75 72.5 Z" fill="#f87171" />
-<path d="M50 85 L75 72.5 L75 97.5 L50 110 Z" fill="#f87171" />
-<path d="M75 72.5 L100 60 L100 85 L75 97.5 Z" fill="#f87171" />
-</g>
-<g stroke="black" stroke-width="1.5" stroke-linejoin="round">
-<path d="M0 35 L25 47.5 L25 72.5 L0 60 Z" fill="#4ade80" />
-<path d="M25 47.5 L50 60 L50 85 L25 72.5 Z" fill="#4ade80" />
-<path d="M0 60 L25 72.5 L25 97.5 L0 85 Z" fill="#4ade80" />
-<path d="M25 72.5 L50 85 L50 110 L25 97.5 Z" fill="#4ade80" />
-</g>
-<path d="M10 50 Q 25 35, 40 50" stroke="blue" stroke-width="3" fill="none" />
-<polygon points="40,50 32,46 32,54" fill="blue" stroke="none" transform="rotate(45 40 50)" />
-<g font-size="5" font-family="sans-serif" text-anchor="middle" fill="black" font-weight="bold" stroke="white" stroke-width="0.2">
-<text x="10" y="57">0</text>
-<text x="40" y="74">1</text>
-<text x="10" y="85">4</text>
-<text x="40" y="100">5</text>
-</g>
-</svg>
-</div>
-
-<!-- RIGHT Action -->
-<div class="flex flex-col items-center">
-
-<div class="mb-2 text-center" dir="rtl">
-
-**הפעולה $R$ (Right):** <br /> סיבוב הפאה הימנית.
-
-<div class="text-xs text-right mt-1">
-
-* מיקומים: $1 \to 3 \to 7 \to 5 \to 1$
-* אוריינטציה: $\{1,3\} \to -1, \{5,7\} \to +1$
-
-</div>
-</div>
-
-<svg width="100" height="110" viewBox="0 0 100 110">
-<g stroke="black" stroke-width="0.5" stroke-linejoin="round" opacity="0.4">
-<path d="M50 10 L25 22.5 L50 35 L75 22.5 Z" fill="white" />
-<path d="M25 22.5 L0 35 L25 47.5 L50 35 Z" fill="white" />
-<path d="M75 22.5 L50 35 L75 47.5 L100 35 Z" fill="white" /> 
-<path d="M50 35 L25 47.5 L50 60 L75 47.5 Z" fill="white" />
-<path d="M0 35 L25 47.5 L25 72.5 L0 60 Z" fill="#4ade80" />
-<path d="M25 47.5 L50 60 L50 85 L25 72.5 Z" fill="#4ade80" />
-<path d="M0 60 L25 72.5 L25 97.5 L0 85 Z" fill="#4ade80" />
-<path d="M25 72.5 L50 85 L50 110 L25 97.5 Z" fill="#4ade80" />
-<path d="M50 60 L75 47.5 L75 72.5 L50 85 Z" fill="#f87171" />
-<path d="M75 47.5 L100 35 L100 60 L75 72.5 Z" fill="#f87171" />
-<path d="M50 85 L75 72.5 L75 97.5 L50 110 Z" fill="#f87171" />
-<path d="M75 72.5 L100 60 L100 85 L75 97.5 Z" fill="#f87171" />
-</g>
-<g stroke="black" stroke-width="1.5" stroke-linejoin="round">
-<path d="M50 60 L75 47.5 L75 72.5 L50 85 Z" fill="#f87171" />
-<path d="M75 47.5 L100 35 L100 60 L75 72.5 Z" fill="#f87171" />
-<path d="M50 85 L75 72.5 L75 97.5 L50 110 Z" fill="#f87171" />
-<path d="M75 72.5 L100 60 L100 85 L75 97.5 Z" fill="#f87171" />
-</g>
-<path d="M60 60 Q 75 45, 90 60" stroke="blue" stroke-width="3" fill="none" />
-<polygon points="90,60 82,56 82,64" fill="blue" stroke="none" transform="rotate(45 90 60)" />
-<g font-size="5" font-family="sans-serif" text-anchor="middle" fill="black" font-weight="bold" stroke="white" stroke-width="0.2">
-<text x="90" y="60">3</text>
-<text x="60" y="75">1</text>
-<text x="60" y="97">5</text>
-<text x="90" y="85">7</text>
-</g>
-</svg>
-</div>
-
-</div>
-
-<div class="mt-8 p-4 bg-blue-50 text-sm rounded shadow border-l-4 border-blue-500" dir="rtl">
-
-<b>הערה לגבי האוריינטציה $(r)$:</b> <br />
-סיבוב הפאות העליונה/תחתונה שומר על הצבע הלבן/צהוב בפאה העליונה/תחתונה, ולכן האוריינטציה לא משתנה $(+0)$.
-לעומת זאת, סיבוב פאה צדדית (כמו $F$ או $R$) גורם לפינות "להתגלגל", כך שהצבע שהיה למעלה עובר לצד. זה מתבטא בשינוי אוריינטציה של $+1$ (עם השעון) או $-1$ (נגד כיוון השעון).
-
-</div>
 
 ---
 
@@ -368,216 +269,7 @@ $$ s = \langle (p_0, r_0), (p_1, r_1), \dots, (p_7, r_7) \rangle $$
 # שקילות מערכות מעברים
 
 * התנהגות המערכת תוגדר באמצעות תיאור קבוצת הריצות שלה.
+
 * נרצה לבדוק אם כל (סדרות התיוגים של) הריצות של המערכת "חוקיות".
 * **שקילות:** שתי מערכות מעברים יקראו שקולות אם קבוצת הסדרות הנ"ל שוות.
 
----
-
-<style>
-.slidev-layout { direction: rtl; text-align: right; }
-.katex-display, .katex { direction: ltr; } /* נוסחאות נשארות LTR */
-code, pre { direction: ltr; text-align: left; }
-.small { font-size: 0.9em; opacity: 0.95; }
-.note { opacity: 0.8; font-size: 0.9em; }
-.card {
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: 14px;
-  padding: 14px 16px;
-  background: rgba(255,255,255,0.04);
-}
-.grid2 { display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px; align-items: center; }
-</style>
-
-# מודל לקובייה הונגרית 2×2  
-## מערכת מעברים — מצבים, פעולות, והדגמות ויזואליות
-
-<div class="mt-6 grid2">
-  <div class="card">
-    <div class="small">
-      מה נראה היום:
-      <ul>
-        <li>איך מייצגים מצב של 2×2 בצורה קומפקטית</li>
-        <li>איך מגדירים פעולות U / R / F כמיפוי דטרמיניסטי בין מצבים</li>
-        <li>הדגמות: קובייה 3D אינטראקטיבית + אנימציות SVG של המהלכים</li>
-      </ul>
-    </div>
-    <div class="note">לא נכנסים לחבורות/תיאוריה עמוקה—רק מודל שימושי וברור.</div>
-  </div>
-
-  <div class="card">
-    <Cube2x2 class="h-64" />
-    <div class="note mt-2">גרור עם העכבר לסיבוב. גלגלת = זום.</div>
-  </div>
-</div>
-
----
-
-# אינטואיציה: Slots מול Pieces
-
-<div class="card">
-<ul>
-  <li><b>Slots (0..7)</b> — 8 מיקומים פיזיים קבועים (פינות) על הקובייה.</li>
-  <li><b>Pieces (0..7)</b> — 8 חתיכות הפינה עצמן.</li>
-</ul>
-
-כל מצב אומר:
-<ul>
-  <li>איזו חתיכה יושבת בכל פינה</li>
-  <li>ואיך היא “מסובבת” בתוך אותה פינה</li>
-</ul>
-</div>
-
----
-
-# מספור הפינות (Slots) — בחירה קבועה
-
-<div class="card">
-נשתמש במספור סטנדרטי לפי מצב פתור (רק כדי שיהיה עקבי):
-
-<ul>
-  <li>0 = UFR (למעלה־קדימה־ימין)</li>
-  <li>1 = URB (למעלה־ימין־אחורה)</li>
-  <li>2 = UBL (למעלה־אחורה־שמאל)</li>
-  <li>3 = ULF (למעלה־שמאל־קדימה)</li>
-  <li>4 = DFR (למטה־קדימה־ימין)</li>
-  <li>5 = DRB (למטה־ימין־אחורה)</li>
-  <li>6 = DBL (למטה־אחורה־שמאל)</li>
-  <li>7 = DLF (למטה־שמאל־קדימה)</li>
-</ul>
-</div>
-
----
-
-# ייצוג מצב
-
-<div class="card">
-מצב הוא 8־ייה של זוגות:
-\[
-s = \langle (p_0,r_0), (p_1,r_1), \dots, (p_7,r_7) \rangle
-\]
-
-לכל פינה \(i\):
-<ul>
-  <li>\(p_i \in \{0..7\}\): איזו <b>חתיכה</b> נמצאת כרגע ב־slot \(i\)</li>
-  <li>\(r_i \in \{0,1,2\}\): האוריינטציה שלה (Twist) מודולו 3</li>
-</ul>
-</div>
-
-<div class="note mt-2">
-אפשר לחשוב על זה כמו "לוח" עם 8 תאים: בכל תא כתוב מי יושב שם + איך הוא מסובב.
-</div>
-
----
-
-# פעולות: U / R / F
-
-<div class="card">
-נבחר את קבוצת הפעולות:
-\[
-Act=\{U,F,R\}
-\]
-
-כל פעולה:
-<ul>
-  <li>מחליפה מיקומים של <b>4 פינות</b> (מחזור)</li>
-  <li>ומעדכנת אוריינטציה של אותן פינות ב־\(\pm 1 \pmod 3\) לפי הכללים של הקובייה</li>
-</ul>
-</div>
-
----
-
-# “מה זה אומר פורמלית?” (בלי להעמיס)
-
-<div class="card">
-נגדיר לכל פעולה \(a\) פונקציה דטרמיניסטית:
-\[
-\delta_a: S \to S
-\]
-
-ואז המעבר הוא פשוט:
-\[
-s \xrightarrow{a} s' \iff s'=\delta_a(s)
-\]
-
-הפואנטה: זה בדיוק "מכונת מצבים" שבה כל צעד הוא U/R/F.
-</div>
-
----
-
-# הדגמה אינטראקטיבית: הקובייה מסתובבת בלייב
-
-<div class="card">
-<Cube2x2 class="h-96" />
-</div>
-
-<div class="note mt-2">
-זה שקף “להרגיש את המודל”: פעולה היא פשוט מעבר—אפשר לחבר אחר כך גם כפתורים שמפעילים U/R/F על המצב.
-</div>
-
----
-
-# אנימציית מהלך U (סיבוב שכבת העליונה)
-
-<div class="grid2">
-  <div class="card">
-    <h3>U</h3>
-    <ul>
-      <li>מסובב את ארבע פינות השכבה העליונה במחזור.</li>
-      <li>ויזואלית: הריבוע העליון מסתובב.</li>
-    </ul>
-  </div>
-  <div class="card">
-    <MoveU class="w-full h-72" />
-  </div>
-</div>
-
----
-
-# אנימציית מהלך R (סיבוב הפאה הימנית)
-
-<div class="grid2">
-  <div class="card">
-    <h3>R</h3>
-    <ul>
-      <li>מסובב את ארבע הפינות שעל "עמודת ימין".</li>
-      <li>ויזואלית: הצד הימני מתחלף במחזור.</li>
-    </ul>
-  </div>
-  <div class="card">
-    <MoveR class="w-full h-72" />
-  </div>
-</div>
-
----
-
-# אנימציית מהלך F (סיבוב הפאה הקדמית)
-
-<div class="grid2">
-  <div class="card">
-    <h3>F</h3>
-    <ul>
-      <li>מסובב את ארבע הפינות של הפאה הקדמית.</li>
-      <li>ויזואלית: השורה הקדמית מתחלפת במחזור.</li>
-    </ul>
-  </div>
-  <div class="card">
-    <MoveF class="w-full h-72" />
-  </div>
-</div>
-
----
-
-# סיכום
-
-<div class="card">
-מה קיבלנו:
-<ul>
-  <li><b>מצב</b> = 8־ייה של (איזה piece, איזה twist).</li>
-  <li><b>פעולה</b> = מעבר דטרמיניסטי שמזיז 4 פינות ומעדכן twist.</li>
-  <li><b>מערכת מעברים</b> = בסיס מצוין לחיפוש מסלולים, בדיקת תכונות, או הדמיה.</li>
-</ul>
-</div>
-
-<div class="note mt-2">
-אם תרצה בשלב הבא: אני יכול להוסיף לשקף האינטראקטיבי כפתורים שמפעילים U/R/F על מצב פנימי ומציגים את המצב בטבלה.
-</div>

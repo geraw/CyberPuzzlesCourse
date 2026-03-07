@@ -3,7 +3,7 @@
        @mousedown.stop @touchstart.stop @pointerdown.stop>
     <svg ref="svgRef" :width="width" :height="height" class="overflow-visible">
       <defs>
-        <marker id="arrowhead-ts-d3" markerWidth="7" markerHeight="5" 
+        <marker :id="markerId" markerWidth="7" markerHeight="5" 
           refX="6" refY="2.5" orient="auto">
           <polygon points="0 0, 7 2.5, 0 5" fill="#333" />
         </marker>
@@ -30,6 +30,9 @@ interface State {
   label?: string; // Atomic Propositions (below right)
   name?: string;  // Inside the rectangle
   initial?: boolean;
+  initialDirection?: 'left' | 'right' | 'top' | 'bottom';
+  labelX?: number; // Offset for label
+  labelY?: number;
 }
 
 interface Transition {
@@ -57,6 +60,8 @@ const props = withDefaults(defineProps<Props>(), {
 const svgRef = ref<SVGSVGElement | null>(null);
 const zoomLayer = ref<SVGGElement | null>(null);
 const containerRef = ref<HTMLDivElement | null>(null);
+
+const markerId = `arrowhead-ts-d3-${Math.random().toString(36).slice(2, 11)}`;
 
 let simulation: d3.Simulation<d3.SimulationNodeDatum, undefined> | null = null;
 
@@ -213,12 +218,12 @@ const render = () => {
         .attr("stroke", "#333")
         .attr("stroke-width", 2)
         .attr("fill", "none")
-        .attr("marker-end", "url(#arrowhead-ts-d3)");
+        .attr("marker-end", `url(#${markerId})`);
 
     // Link Labels (foreignObject) - keep reference to foreignObject for positioning
     const linkLabelFOs = linkSelection.append("foreignObject")
-        .attr("width", 24)
-        .attr("height", 20)
+        .attr("width", 100)
+        .attr("height", 30)
         .style("overflow", "visible");
     
     // Inner div for styling and KaTeX content
@@ -229,10 +234,8 @@ const render = () => {
         .style("width", "100%")
         .style("height", "100%")
         .style("font-size", "12px")
-        .style("background-color", "white")
-        .style("padding", "1px 3px")
-        .style("border-radius", "2px")
-        .html((d: any) => d.action ? renderMath(d.action) : "");
+        .style("padding", "0")
+        .html((d: any) => d.action ? `<span style="background:white; padding:1px 3px; border-radius:2px">${renderMath(d.action)}</span>` : "");
 
     // Draw Nodes
     const nodeGroup = layer.select(".nodes");
@@ -261,10 +264,18 @@ const render = () => {
 
     // Initial state arrow
     nodeSelection.filter(d => d.initial).append("path")
-        .attr("d", `M -50,0 L -${rectW/2 + 5},0`) 
+        .attr("d", (d: any) => {
+             const dir = d.initialDirection || 'left';
+             const len = 50;
+             if (dir === 'left') return `M -${len},0 L -${rectW/2 + 5},0`;
+             if (dir === 'right') return `M ${len},0 L ${rectW/2 + 5},0`;
+             if (dir === 'top') return `M 0,-${len} L 0,-${rectH/2 + 5}`;
+             if (dir === 'bottom') return `M 0,${len} L 0,${rectH/2 + 5}`;
+             return `M -${len},0 L -${rectW/2 + 5},0`;
+        })
         .attr("stroke", "#000")
         .attr("stroke-width", 2)
-        .attr("marker-end", "url(#arrowhead-ts-d3)");
+        .attr("marker-end", `url(#${markerId})`);
 
     // State Name (foreignObject)
     nodeSelection.append("foreignObject")
@@ -283,16 +294,18 @@ const render = () => {
         .style("pointer-events", "none")
         .html((d: any) => renderMath(d.text || d.name || d.id));
 
-    // Label (Propositions - Below Right)
+    // Label (Propositions - Below Right or custom)
     nodeSelection.append("foreignObject")
-        .attr("width", 60)
+        .attr("width", 100)
         .attr("height", 30)
-        .attr("x", 20 - 30) // Centered on (20, 35)
-        .attr("y", 35 - 15)
+        .attr("x", (d: any) => d.labelX !== undefined ? d.labelX : (rectW / 2 + 5))
+        .attr("y", (d: any) => d.labelY !== undefined ? d.labelY : 5)
         .style("pointer-events", "none")
         .append("xhtml:div")
+        .attr("dir", "ltr")
+        .style("direction", "ltr")
         .style("display", "flex")
-        .style("justify-content", "center")
+        .style("justify-content", "flex-start")
         .style("align-items", "center")
         .style("width", "100%")
         .style("height", "100%")
@@ -341,7 +354,7 @@ const render = () => {
                      return 0;
                  }
 
-                 const w = 40;
+                 const w = 100;
                  if (s.id === t.id) {
                      const dirStr = d.loopDirection || '-45deg';
                      let angle = -Math.PI * 3 / 4;
