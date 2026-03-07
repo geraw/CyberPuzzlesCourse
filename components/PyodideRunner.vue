@@ -12,7 +12,8 @@
       </div>
       <div class="col-output">
         <div class="col-header">Output</div>
-        <pre class="output" :class="{ error: !!errorText }">{{ errorText || outputText || '(click Run)' }}</pre>
+        <div v-if="htmlOutput" class="output html-output" v-html="htmlOutput"></div>
+        <pre v-else class="output" :class="{ error: !!errorText }">{{ errorText || outputText || '(click Run)' }}</pre>
       </div>
     </div>
   </div>
@@ -28,6 +29,7 @@ const props = defineProps<{
 const code = ref('# Loading...')
 const outputText = ref('')
 const errorText = ref('')
+const htmlOutput = ref('')
 const running = ref(false)
 const loading = ref(true)
 
@@ -71,6 +73,7 @@ async function run() {
   running.value = true
   outputText.value = ''
   errorText.value = ''
+  htmlOutput.value = ''
 
   try {
     pyodide.setStdout({
@@ -88,6 +91,12 @@ async function run() {
       isatty: false,
     })
     await pyodide.runPythonAsync(code.value)
+    // Detect SVG/HTML in output
+    const out = outputText.value
+    if (out.includes('<svg') || out.includes('<div') || out.includes('<table')) {
+      htmlOutput.value = out
+      outputText.value = ''
+    }
   } catch (e: any) {
     errorText.value += e.toString()
   } finally {
@@ -175,5 +184,11 @@ async function run() {
 }
 .output.error {
   color: #f38ba8;
+}
+.html-output {
+  background: #1e1e2e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>
