@@ -439,7 +439,7 @@ $|I| \le 1$ וגם <br> <br> $|Post(s) \cap \{ s' \in S \mid L(s') = A \}| \le 1
 
 # מקטעי ריצה מקסימליים והתחלתיים
 
-<img src="/maximal_initial_fragments.png" class="absolute right-95 bottom-5 w-55" />
+<img src="/maximal_initial_fragments.png" class="absolute right-95 bottom-0 w-45" />
 
 מקטע ריצה נקרא **מקסימלי** כאשר לא ניתן להאריך אותו, ו**התחלתי** כאשר הוא מתחיל ממצב התחלתי:
 
@@ -467,6 +467,28 @@ $|I| \le 1$ וגם <br> <br> $|Post(s) \cap \{ s' \in S \mid L(s') = A \}| \le 1
 </div>
 
 </div>
+
+</div>
+
+<div class="border-2 border-red-400 bg-red-50 rounded-lg p-3 mt-4" dir="rtl" align="center">
+
+**ריצה (Execution):** מקטע ריצה שהוא גם **התחלתי** וגם **מקסימלי**.
+
+</div>
+
+---
+
+# מצבים נגישים (Reachable States)
+
+מצב $s$ נקרא **נגיש** אם קיים מקטע ריצה סופי המתחיל במצב התחלתי ומסתיים ב-$s$.
+
+<div class="border-2 border-blue-400 bg-blue-50 rounded-lg p-3 my-3" dir="rtl" align="center">
+
+**הגדרה:** מצב $s \in S$ נקרא **נגיש** ב-$TS$ אם קיים מקטע ריצה התחלתי סופי:
+
+$$s_0 \xrightarrow{\alpha_1} s_1 \xrightarrow{\alpha_2} \dots \xrightarrow{\alpha_n} s_n = s$$
+
+הקבוצה $Reach(TS)$ מציינת את **קבוצת כל המצבים הנגישים** ב-$TS$.
 
 </div>
 
