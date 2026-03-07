@@ -68,9 +68,9 @@ info: |
 
 <TransitionSystemD3  
   :states="[
-    { id: 's0', text: '$s_0$', label: '$\\{p\\}$', initial: true, x: 442, y: 202 },
-    { id: 's1', text: '$s_1$', label: '$\\{q\\}$', x: 229, y: 271 },
-    { id: 's2', text: '$s_2$', label: '$\\{p,q\\}$', x: 269, y: 136 }
+      { id: 's0', text: '$s_0$', label: '$\{p\}$', initial: true, x: 437, y: 271 },
+      { id: 's1', text: '$s_1$', label: '$\{q\}$', x: 229, y: 271 },
+      { id: 's2', text: '$s_2$', label: '$\{p,q\}$', x: 336, y: 138 }
   ]"
   :transitions="[
     { source: 's0', target: 's1', action: '$\\alpha$' },
