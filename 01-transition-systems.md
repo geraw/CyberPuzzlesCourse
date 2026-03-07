@@ -276,7 +276,7 @@ $L: \{RH\} \to \emptyset \to \emptyset \to \{TH\} \to \{TH,RH\}$
 
 # קבוצות קודמים ועוקבים ישירים 
 
-<img src="/predecessors_successors_comic.png" class="absolute left-4 bottom-4 w-48 rounded-lg shadow-lg opacity-90" />
+<img src="/predecessors_successors_comic.png" class="absolute right-95 bottom-2 w-55" />
 
 תהי $TS = (S, Act, \to, I, AP, L)$ מערכת מעברים. עבור מצב $s \in S$ ופעולה $\alpha \in Act$:
 
@@ -307,6 +307,8 @@ $L: \{RH\} \to \emptyset \to \emptyset \to \{TH\} \to \{TH,RH\}$
 ---
 
 # הרחבה לקבוצות
+
+<img src="/pointwise_extension_comic.png" class="absolute right-95 bottom-2 w-55" />
 
 תהי $TS = (S, Act, \to, I, AP, L)$ מערכת מעברים. עבור קבוצת מצבים $C \subseteq S$ ופעולה $\alpha \in Act$:
 
