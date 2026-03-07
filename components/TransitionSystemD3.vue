@@ -29,6 +29,8 @@ interface State {
   y?: number;
   label?: string; // Atomic Propositions (below right)
   name?: string;  // Inside the rectangle
+  text?: string;  // Alias for name
+  width?: number; // Custom width override
   initial?: boolean;
   initialDirection?: 'left' | 'right' | 'top' | 'bottom';
   labelX?: number; // Offset for label
@@ -132,7 +134,7 @@ const render = () => {
     }
     
     // Helper: Self Loop Path
-    function getSelfLoopPath(x: number, y: number, dirStr: string = '-45deg') {
+    function getSelfLoopPath(x: number, y: number, dirStr: string = '-45deg', nodeWidth: number = rectW) {
        let angle = -Math.PI * 3 / 4; 
        const degMatch = dirStr.match(/(-?[\d.]+)deg/);
        if (degMatch) {
@@ -147,11 +149,11 @@ const render = () => {
        const a1 = angle - spread;
        const a2 = angle + spread;
        
-       const p1 = getRectIntersection(Math.cos(a1), Math.sin(a1), rectW, rectH);
+       const p1 = getRectIntersection(Math.cos(a1), Math.sin(a1), nodeWidth, rectH);
        const x1 = x + p1.x;
        const y1 = y + p1.y;
        
-       const p2 = getRectIntersection(Math.cos(a2), Math.sin(a2), rectW, rectH);
+       const p2 = getRectIntersection(Math.cos(a2), Math.sin(a2), nodeWidth, rectH);
        const x2 = x + p2.x;
        const y2 = y + p2.y;
        
@@ -182,7 +184,7 @@ const render = () => {
         d.y = event.y;
     }
     function dragended(event: any, d: any) {
-        if (!event.active && simulation) simulation.alphaTarget(0);
+        if (!event.active && simulation) (simulation as any).alphaTarget(0);
     }
     
     // Right-click handler to print current coordinates
@@ -250,9 +252,9 @@ const render = () => {
 
     // Node Rectangle
     nodeSelection.append("rect")
-        .attr("width", rectW)
+        .attr("width", (d: any) => d.width || rectW)
         .attr("height", rectH)
-        .attr("x", -rectW / 2)
+        .attr("x", (d: any) => -(d.width || rectW) / 2)
         .attr("y", -rectH / 2)
         .attr("rx", 5)
         .attr("ry", 5)
@@ -263,15 +265,16 @@ const render = () => {
         .on("contextmenu", printCoordinates);
 
     // Initial state arrow
-    nodeSelection.filter(d => d.initial).append("path")
+    nodeSelection.filter(d => !!d.initial).append("path")
         .attr("d", (d: any) => {
              const dir = d.initialDirection || 'left';
              const len = 50;
-             if (dir === 'left') return `M -${len},0 L -${rectW/2 + 5},0`;
-             if (dir === 'right') return `M ${len},0 L ${rectW/2 + 5},0`;
+             const nw = d.width || rectW;
+             if (dir === 'left') return `M -${len},0 L -${nw/2 + 5},0`;
+             if (dir === 'right') return `M ${len},0 L ${nw/2 + 5},0`;
              if (dir === 'top') return `M 0,-${len} L 0,-${rectH/2 + 5}`;
              if (dir === 'bottom') return `M 0,${len} L 0,${rectH/2 + 5}`;
-             return `M -${len},0 L -${rectW/2 + 5},0`;
+             return `M -${len},0 L -${nw/2 + 5},0`;
         })
         .attr("stroke", "#000")
         .attr("stroke-width", 2)
@@ -279,9 +282,9 @@ const render = () => {
 
     // State Name (foreignObject)
     nodeSelection.append("foreignObject")
-        .attr("width", rectW)
+        .attr("width", (d: any) => d.width || rectW)
         .attr("height", rectH)
-        .attr("x", -rectW / 2)
+        .attr("x", (d: any) => -(d.width || rectW) / 2)
         .attr("y", -rectH / 2)
         .style("pointer-events", "none")
         .append("xhtml:div")
@@ -298,7 +301,7 @@ const render = () => {
     nodeSelection.append("foreignObject")
         .attr("width", 100)
         .attr("height", 30)
-        .attr("x", (d: any) => d.labelX !== undefined ? d.labelX : (rectW / 2 + 5))
+        .attr("x", (d: any) => d.labelX !== undefined ? d.labelX : ((d.width || rectW) / 2 + 5))
         .attr("y", (d: any) => d.labelY !== undefined ? d.labelY : 5)
         .style("pointer-events", "none")
         .append("xhtml:div")
@@ -327,18 +330,18 @@ const render = () => {
             if (!source || !target) return "";
 
             if (source.id === target.id) {
-               return getSelfLoopPath(source.x!, source.y!, d.loopDirection || '-45deg');
+               return getSelfLoopPath(source.x!, source.y!, d.loopDirection || '-45deg', source.width || rectW);
             }
 
             const dx = target.x! - source.x!;
             const dy = target.y! - source.y!;
-            const sourceInt = getRectIntersection(dx, dy, rectW, rectH);
-            const targetInt = getRectIntersection(-dx, -dy, rectW, rectH);
+            const sourceInt = getRectIntersection(dx, dy, source.width || rectW, rectH);
+            const targetInt = getRectIntersection(-dx, -dy, target.width || rectW, rectH);
             return `M ${source.x! + sourceInt.x},${source.y! + sourceInt.y} L ${target.x! + targetInt.x},${target.y! + targetInt.y}`;
         });
 
         linkLabelFOs
-            .attr("x", (d, i) => {
+            .attr("x", (d: any) => {
                  let s: any = d.source;
                  let t: any = d.target;
                  if (typeof s !== 'object') s = nodes.find(n => n.id === s);
@@ -390,12 +393,12 @@ const render = () => {
     };
 
     if (shouldSimulate) {
-        simulation = d3.forceSimulation(nodes)
+        simulation = d3.forceSimulation(nodes as any)
             .force("link", d3.forceLink(links).id((d: any) => d.id).distance(150))
             .force("charge", d3.forceManyBody().strength(-500))
             .force("center", d3.forceCenter(props.width / 2, props.height / 2))
-            .force("collide", d3.forceCollide(rectW).iterations(2));
-        simulation.on("tick", tick);
+            .force("collide", d3.forceCollide((d: any) => (d.width || rectW) / 2 + 20).iterations(2));
+        (simulation as any).on("tick", tick);
     } else {
         tick();
     }
