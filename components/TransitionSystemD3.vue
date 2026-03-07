@@ -222,7 +222,7 @@ const render = () => {
 
     // Link Labels (foreignObject) - keep reference to foreignObject for positioning
     const linkLabelFOs = linkSelection.append("foreignObject")
-        .attr("width", 100)
+        .attr("width", 100)  
         .attr("height", 30)
         .style("overflow", "visible");
     
