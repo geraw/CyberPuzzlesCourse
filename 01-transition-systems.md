@@ -221,7 +221,7 @@ $L: \{RH\} \to \{RH\} \to \{TH,RH\}$
 </div>
 
 <TransitionSystemD3  
-  :width="400" :height="200"
+  :width="400" :height="200" 
   :states="[
     { id: 's0', text: '$(3,1)$', label: '$\\{RH\\}$', initial: true, initialDirection: 'right',  x: 280, y: 180 },
     { id: 's1', text: '$(2,1)$', label: '$\\emptyset$', x: 120, y: 180 },
