@@ -251,7 +251,7 @@ info: |
 | **$W$**  | $x {\leftarrow} x{+}1;\,\, bat {\leftarrow} bat{-}1$ |
 | **$NW$** | $x {\leftarrow} x{+}1;\,\, y {\leftarrow} y{-}1;\,\, bat {\leftarrow} bat{-}1$ |
 | **$CH$** | $bat {\leftarrow} bat{+}1$ |
-| **$SW$** | $bat {\leftarrow} bat{-}10$ |
+| **$TR$** | $bat {\leftarrow} bat{-}10$ |
 
 </div>
 
@@ -261,20 +261,20 @@ info: |
   :width="600" :height="250"
   :states="[
     { id: 'load', text: 'טעינה', x: 300, y: 50, width: 80, initial: true, initialDirection: 'top', initialText: '$bat=100 \\land x=0 \\land y=0$', initialTextWidth: 200 },
-    { id: 'free', text: 'תזוזה באלכסון', x: 100, y: 180, width: 140 },
-    { id: 'axis', text: 'תזוזה בצירים', x: 500, y: 180, width: 140 }
+    { id: 'cart', text: 'תזוזה בצירים', x: 100, y: 180, width: 140 },
+    { id: 'diag', text: 'תזוזה באלכסון', x: 500, y: 180, width: 140 }
   ]"
   :transitions="[
     { source: 'load', target: 'load', action: '$bat < 100 : CH$', actionWidth: 200,  loopDirection: '90deg' },
-    { source: 'load', target: 'free', action: '$bat > 10 : $  $nothing$', actionX: -20 },
-    { source: 'load', target: 'axis', action: '$bat > 10 : $  $nothing$' },
-    { source: 'free', target: 'axis', action: '$SW$ $bat > 10 : $' },
-    { source: 'axis', target: 'free', action: '$SW$ $bat > 10 : $' },
-    { source: 'free', target: 'load', action: '$x=0 \\land y=0 : $ $nothing$', curve: -0.5, actionWidth: 150, actionX: -50 },
-    { source: 'axis', target: 'load', action: '$x=0 \\land y=0 : $ $nothing$', curve: 0.5, actionWidth: 150, actionX: 10 },
-    { source: 'free', target: 'free', action: 
+    { source: 'load', target: 'cart', action: '$bat > 10 : $  $nothing$', actionX: -20 },
+    { source: 'load', target: 'diag', action: '$bat > 10 : $  $nothing$' },
+    { source: 'cart', target: 'diag', action: '$TR$ $bat > 10 : $' },
+    { source: 'diag', target: 'cart', action: '$TR$ $bat > 10 : $' },
+    { source: 'cart', target: 'load', action: '$x=0 \\land y=0 : $ $nothing$', curve: -0.5, actionWidth: 150, actionX: -50 },
+    { source: 'diag', target: 'load', action: '$x=0 \\land y=0 : $ $nothing$', curve: 0.5, actionWidth: 150, actionX: 10 },
+    { source: 'cart', target: 'cart', action: 
     '$x<10 \\land bat>0 :  E$ <br> $x>0 \\land bat>0 :  W$ <br> $y<10 \\land bat>0 :  N$ <br> $y>0 \\land bat>0 :  S$', loopDirection: '90deg', actionWidth: 150, actionHeight: 40, actionY: 30 },
-    { source: 'axis', target: 'axis', action: 
+    { source: 'diag', target: 'diag', action: 
     '$x<10 \\land y>0 \\land bat>0 :  NE$ <br> $x>0 \\land y>0 \\land bat>0 :  NW$ <br> $y<10 \\land x>0 \\land bat>0 :  SE$ <br> $y<10 \\land x<10 \\land bat>0 :  SW$', loopDirection: '90deg', actionWidth: 250, actionHeight: 40, actionY: 30 },
   ]"
 />
