@@ -227,6 +227,7 @@ info: |
 
 * נדגים את שתי הגישות.
 
+
 ---
 
 # דוגמה: גרף תוכנית של רובוט
@@ -256,7 +257,7 @@ info: |
 </div>
 
 
-<div class="flex justify-center mt-5 ml-60">
+<div class="flex justify-center mt-10 ml-60">
 <TransitionSystemD3  
   :width="600" :height="250"
   :states="[
@@ -280,5 +281,21 @@ info: |
 />
 </div>
 
+
+---
+
+# הגדרת גרף תוכנית (Program Graph)
+
+גרף תוכנית מעל קבוצת משתנים $Var$ הוא גרף מכוון שבו הקשתות מתויגות בתנאים ובפעולות.
+
+- **משתנים וערכים:** לכל משתנה $x$ יש דומיין $dom(x)$. $Eval(Var)$ היא קבוצת ההערכות (evaluations).
+- **פעולות והשפעות:** ההשפעה של פעולה $\alpha \in Act$ מוגדרת ע"י מיפוי:
+  $$ Effect : Act \times Eval(Var) \to Eval(Var) $$
+  המתאר כיצד הערכה $\eta$ משתנה ע"י ביצוע הפעולה.
+
+- **דוגמה:** עבור $\alpha = (x := y+5)$, אם $\eta(x)=17, \eta(y)=-2$, אז:
+  $$ Effect(\alpha, \eta)(x) = \eta(y)+5 = 3, \quad Effect(\alpha, \eta)(y) = \eta(y) = -2 $$
+
+- **מיקומים (Locations):** צמתי הגרף נקראים "מיקומים". יש להם פונקציית בקרה הקובעת אילו מעברים מותנים אפשריים בכל שלב.
 
 
