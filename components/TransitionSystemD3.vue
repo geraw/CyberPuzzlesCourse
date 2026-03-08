@@ -35,6 +35,9 @@ interface State {
   initialDirection?: 'left' | 'right' | 'top' | 'bottom';
   labelX?: number; // Offset for label
   labelY?: number;
+  initialText?: string;
+  initialTextWidth?: number;
+  initialTextHeight?: number;
 }
 
 interface Transition {
@@ -42,7 +45,11 @@ interface Transition {
   target: string;
   action?: string;
   loopDirection?: string; // e.g., '0deg', '90deg'
-  loopSweep?: string;     // Not fully used in simple D3 bezier logic but kept for compat
+  actionWidth?: number;
+  actionHeight?: number;
+  actionX?: number; // Offset from default center
+  actionY?: number; // Offset from default center
+  curve?: number;
 }
 
 interface Props {
@@ -224,8 +231,8 @@ const render = () => {
 
     // Link Labels (foreignObject) - keep reference to foreignObject for positioning
     const linkLabelFOs = linkSelection.append("foreignObject")
-        .attr("width", 100)  
-        .attr("height", 30)
+        .attr("width", (d: any) => d.actionWidth || 100)  
+        .attr("height", (d: any) => d.actionHeight || 30)
         .style("overflow", "visible");
     
     // Inner div for styling and KaTeX content
@@ -280,6 +287,23 @@ const render = () => {
         .attr("stroke-width", 2)
         .attr("marker-end", `url(#${markerId})`);
 
+    // Initial state label (foreignObject)
+    const initialLabels = nodeSelection.filter(d => !!d.initial && !!d.initialText).append("foreignObject")
+        .attr("width", (d: any) => d.initialTextWidth || 100)
+        .attr("height", (d: any) => d.initialTextHeight || 30)
+        .style("overflow", "visible")
+        .style("pointer-events", "none");
+
+    initialLabels.append("xhtml:div")
+        .style("display", "flex")
+        .style("justify-content", "center")
+        .style("align-items", "center")
+        .style("width", "100%")
+        .style("height", "100%")
+        .style("font-size", "12px")
+        .style("color", "#333")
+        .html((d: any) => renderMath(d.initialText));
+
     // State Name (foreignObject)
     nodeSelection.append("foreignObject")
         .attr("width", (d: any) => d.width || rectW)
@@ -332,9 +356,25 @@ const render = () => {
             if (source.id === target.id) {
                return getSelfLoopPath(source.x!, source.y!, d.loopDirection || '-45deg', source.width || rectW);
             }
-
+            
             const dx = target.x! - source.x!;
             const dy = target.y! - source.y!;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            
+            if (d.curve) {
+                // Perpendicular vector
+                const nx = -dy / dist;
+                const ny = dx / dist;
+                const curveOffset = dist * d.curve;
+                const cx = (source.x! + target.x!) / 2 + nx * curveOffset;
+                const cy = (source.y! + target.y!) / 2 + ny * curveOffset;
+                
+                const sourceInt = getRectIntersection(cx - source.x!, cy - source.y!, source.width || rectW, rectH);
+                const targetInt = getRectIntersection(cx - target.x!, cy - target.y!, target.width || rectW, rectH);
+                
+                return `M ${source.x! + sourceInt.x},${source.y! + sourceInt.y} Q ${cx},${cy} ${target.x! + targetInt.x},${target.y! + targetInt.y}`;
+            }
+
             const sourceInt = getRectIntersection(dx, dy, source.width || rectW, rectH);
             const targetInt = getRectIntersection(-dx, -dy, target.width || rectW, rectH);
             return `M ${source.x! + sourceInt.x},${source.y! + sourceInt.y} L ${target.x! + targetInt.x},${target.y! + targetInt.y}`;
@@ -347,29 +387,33 @@ const render = () => {
                  if (typeof s !== 'object') s = nodes.find(n => n.id === s);
                  if (typeof t !== 'object') t = nodes.find(n => n.id === t);
                  
-                 if (!s || !t) {
-                     console.warn("Link label: source or target missing", d);
-                     return 0; // Top Left?
-                 }
-                 
-                 if (s.x === undefined || t.x === undefined) {
-                     // console.warn("Link label: coordinates missing", s, t);
-                     return 0;
-                 }
+                 if (!s || !t) return 0;
+                 if (s.x === undefined || t.x === undefined) return 0;
 
-                 const w = 100;
+                 const w = d.actionWidth || 100;
+                 const offsetX = d.actionX || 0;
                  if (s.id === t.id) {
                      const dirStr = d.loopDirection || '-45deg';
                      let angle = -Math.PI * 3 / 4;
                      const degMatch = dirStr.match(/(-?[\d.]+)deg/);
                      if (degMatch) angle = parseFloat(degMatch[1]) * Math.PI / 180;
-                     const dist = 70;
-                     return s.x! + Math.cos(angle) * dist - w/2;
+                     const distLoop = 70;
+                     return s.x! + Math.cos(angle) * distLoop - w/2 + offsetX;
+                 }
+                 
+                 if (d.curve) {
+                     const dx = t.x! - s.x!;
+                     const dy = t.y! - s.y!;
+                     const dist = Math.sqrt(dx*dx + dy*dy);
+                     const nx = -dy / dist;
+                     const ny = dx / dist;
+                     const curveOffset = dist * d.curve;
+                     return (s.x! + t.x!) / 2 + nx * (curveOffset * 0.5) - w/2 + offsetX;
                  }
                  // Center on link
-                 return (s.x! + t.x!) / 2 - w/2;
+                 return (s.x! + t.x!) / 2 - w/2 + offsetX;
             })
-            .attr("y", d => {
+            .attr("y", (d: any) => {
                  let s: any = d.source;
                  let t: any = d.target;
                  if (typeof s !== 'object') s = nodes.find(n => n.id === s);
@@ -377,19 +421,54 @@ const render = () => {
                  if (!s || !t) return 0;
                  if (s.y === undefined || t.y === undefined) return 0;
 
-                 const h = 30;
+                 const h = d.actionHeight || 30;
+                 const offsetY = d.actionY || 0;
                  if (s.id === t.id) {
                      const dirStr = d.loopDirection || '-45deg';
                      let angle = -Math.PI * 3 / 4;
                      const degMatch = dirStr.match(/(-?[\d.]+)deg/);
                      if (degMatch) angle = parseFloat(degMatch[1]) * Math.PI / 180;
-                     const dist = 70;
-                     return s.y! + Math.sin(angle) * dist - h/2;
+                     const distLoop = 70;
+                     return s.y! + Math.sin(angle) * distLoop - h/2 + offsetY;
                  }
-                 return (s.y! + t.y!) / 2 - h/2;
+                 
+                 if (d.curve) {
+                     const dx = t.x! - s.x!;
+                     const dy = t.y! - s.y!;
+                     const dist = Math.sqrt(dx*dx + dy*dy);
+                     const nx = -dy / dist;
+                     const ny = dx / dist;
+                     const curveOffset = dist * d.curve;
+                     return (s.y! + t.y!) / 2 + ny * (curveOffset * 0.5) - h/2 + offsetY;
+                 }
+                 return (s.y! + t.y!) / 2 - h/2 + offsetY;
             });
         
         nodeSelection.attr("transform", d => `translate(${d.x},${d.y})`);
+
+        // Position initial state text
+        nodeSelection.filter(d => !!d.initial && !!d.initialText).select("foreignObject")
+            .attr("x", (d: any) => {
+                const w = d.initialTextWidth || 100;
+                const dir = d.initialDirection || 'left';
+                const len = 50;
+                const nw = d.width || rectW;
+                if (dir === 'left') return -len - w;
+                if (dir === 'right') return nw/2 + 5;
+                if (dir === 'top') return -w/2;
+                if (dir === 'bottom') return -w/2;
+                return -len - w;
+            })
+            .attr("y", (d: any) => {
+                const h = d.initialTextHeight || 30;
+                const dir = d.initialDirection || 'left';
+                const len = 50;
+                if (dir === 'left') return -h/2;
+                if (dir === 'right') return -h/2;
+                if (dir === 'top') return -len - h;
+                if (dir === 'bottom') return len;
+                return -h/2;
+            });
     };
 
     if (shouldSimulate) {

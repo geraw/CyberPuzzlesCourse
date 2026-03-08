@@ -192,7 +192,8 @@ info: |
 6.  **מעברים:** מייצגים את עדכון האוגרים לפי פונקציות המעבר $\delta_{r_j}$:
     $$( \underbrace{a_1, \dots, a_n}_{\text{input}}, \underbrace{c_1, \dots, c_k}_{\text{register}} ) \xrightarrow{\tau} (a'_1, \dots, a'_n, c'_1, \dots, c'_k)$$
     אם ורק אם $c'_j = \delta_{r_j}(a_1, \dots, a_n, c_1, \dots, c_k)$ לכל $j$.
-    *שימו לב:* אין הגבלה על ערכי הקלט החדשים $a'_1, \dots, a'_n$ (שינוי אי-דטרמיניסטי).
+
+    **שימו לב:** אין הגבלה על ערכי הקלט החדשים $a'_1, \dots, a'_n$ (שינוי אי-דטרמיניסטי).
 
 ---
 
@@ -224,6 +225,60 @@ info: |
 
     *   את הגרף המתקבל (המתויג בתנאים) ניתן **לפרוס (unfold)** למערכת מעברים שניתנת לאימות.
 
+* נדגים את שתי הגישות.
+
+---
+
+# דוגמה: גרף תוכנית של רובוט
+
+<div class="absolute top-20 left-10 text-[11px] bg-white/90 dark:bg-slate-900/90 p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 shadow-xl z-20 compact-table">
+
+<style>
+.compact-table table { margin: 0 !important; border-collapse: collapse; }
+.compact-table th, .compact-table td { padding: 3px 4px !important; line-height: 2 !important; }
+</style>
+
+**פעולות והשפעות:**
+
+| פעולה | השפעה |
+| :--- | :--- |
+| **$N$**  | $y {\leftarrow} y{-}1;\,\, bat {\leftarrow} bat{-}1$ |
+| **$NE$** | $x {\leftarrow} x{-}1;\,\, y {\leftarrow} y{-}1;\,\, bat {\leftarrow} bat{-}1$ |
+| **$E$**  | $x {\leftarrow} x{-}1;\,\, bat {\leftarrow} bat{-}1$ |
+| **$SE$** | $x {\leftarrow} x{-}1;\,\, y {\leftarrow} y{+}1;\,\, bat {\leftarrow} bat{-}1$ |
+| **$S$**  | $y {\leftarrow} y{+}1;\,\, bat {\leftarrow} bat{-}1$ |
+| **$SW$** | $x {\leftarrow} x{+}1;\,\, y {\leftarrow} y{+}1;\,\, bat {\leftarrow} bat{-}1$ |
+| **$W$**  | $x {\leftarrow} x{+}1;\,\, bat {\leftarrow} bat{-}1$ |
+| **$NW$** | $x {\leftarrow} x{+}1;\,\, y {\leftarrow} y{-}1;\,\, bat {\leftarrow} bat{-}1$ |
+| **$CH$** | $bat {\leftarrow} bat{+}1$ |
+| **$SW$** | $bat {\leftarrow} bat{-}10$ |
+
+</div>
+
+
+<div class="flex justify-center mt-5 ml-60">
+<TransitionSystemD3  
+  :width="600" :height="250"
+  :states="[
+    { id: 'load', text: 'טעינה', x: 300, y: 50, width: 80, initial: true, initialDirection: 'top', initialText: '$bat=100 \\land x=0 \\land y=0$', initialTextWidth: 200 },
+    { id: 'free', text: 'תזוזה באלכסון', x: 100, y: 180, width: 140 },
+    { id: 'axis', text: 'תזוזה בצירים', x: 500, y: 180, width: 140 }
+  ]"
+  :transitions="[
+    { source: 'load', target: 'load', action: '$bat < 100 : CH$', actionWidth: 200,  loopDirection: '90deg' },
+    { source: 'load', target: 'free', action: '$bat > 10 : $  $nothing$', actionX: -20 },
+    { source: 'load', target: 'axis', action: '$bat > 10 : $  $nothing$' },
+    { source: 'free', target: 'axis', action: '$SW$ $bat > 10 : $' },
+    { source: 'axis', target: 'free', action: '$SW$ $bat > 10 : $' },
+    { source: 'free', target: 'load', action: '$x=0 \\land y=0 : $ $nothing$', curve: -0.5, actionWidth: 150, actionX: -50 },
+    { source: 'axis', target: 'load', action: '$x=0 \\land y=0 : $ $nothing$', curve: 0.5, actionWidth: 150, actionX: 10 },
+    { source: 'free', target: 'free', action: 
+    '$x<10 \\land bat>0 :  E$ <br> $x>0 \\land bat>0 :  W$ <br> $y<10 \\land bat>0 :  N$ <br> $y>0 \\land bat>0 :  S$', loopDirection: '90deg', actionWidth: 150, actionHeight: 40, actionY: 30 },
+    { source: 'axis', target: 'axis', action: 
+    '$x<10 \\land y>0 \\land bat>0 :  NE$ <br> $x>0 \\land y>0 \\land bat>0 :  NW$ <br> $y<10 \\land x>0 \\land bat>0 :  SE$ <br> $y<10 \\land x<10 \\land bat>0 :  SW$', loopDirection: '90deg', actionWidth: 250, actionHeight: 40, actionY: 30 },
+  ]"
+/>
+</div>
 
 
 
