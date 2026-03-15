@@ -135,3 +135,10 @@ strong {
   white-space: pre-wrap !important;
   font-family: inherit;
 }
+
+.puzzle1-modeling-code .slidev-runner-output,
+.puzzle1-modeling-code .slidev-runner-output pre,
+.puzzle1-modeling-code .slidev-runner-output code {
+  font-size: 9.5px !important;
+  line-height: 1.1 !important;
+}
