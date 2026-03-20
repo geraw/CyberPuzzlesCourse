@@ -12,6 +12,11 @@ npm run dev:z3
 ```
 *Note: The Z3 presentation includes a local Node.js proxy backend for executing Python constraints interactively on the slides.*
 
+### On Trusting Trust
+```bash
+npm run dev:trusting-trust
+```
+
 ### Course Introduction
 ```bash
 npm run dev:intro

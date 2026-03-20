@@ -7,6 +7,7 @@
         "build:all": "node build-all.js",
         "dev": "slidev index.md --open",
         "dev:intro": "slidev 00-intro.md --open",
+        "dev:trusting-trust": "slidev trusting-trust.md --open",
         "dev:z3": "concurrently \"node runner-server.js\" \"slidev z3.md --open\""
     },
     "dependencies": {

@@ -18,3 +18,4 @@ Files.zip
 *.fls
 *.fdb_latexmk
 *.xdv
+tmp*
